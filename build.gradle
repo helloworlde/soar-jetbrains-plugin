@@ -1,0 +1,22 @@
+buildscript {
+    repositories {
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        mavenCentral()
+    }
+}
+plugins {
+    id 'org.jetbrains.intellij' version '0.3.12'
+}
+
+group 'io.github.helloworlde'
+version '1.0-SNAPSHOT'
+
+intellij {
+    version '2018.2.4'
+    pluginName 'Soar'
+}
+patchPluginXml {
+    changeNotes """
+      Add change notes here.<br>
+      <em>most HTML tags may be used</em>"""
+}

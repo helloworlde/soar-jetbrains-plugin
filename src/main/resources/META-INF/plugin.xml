@@ -1,0 +1,30 @@
+<idea-plugin>
+    <id>io.github.helloworlde.soar</id>
+    <name>Soar</name>
+    <vendor email="hellowoodes@outlook.com" url="https://github.com/helloworlde/SoarPlugin">HelloWoodes</vendor>
+
+    <description><![CDATA[
+    Plugin for <a href="https://github.com/XiaoMi/soar">Soar</a>
+    ]]></description>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <!-- uncomment to enable plugin in all products
+    <depends>com.intellij.modules.lang</depends>
+    -->
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+    </extensions>
+
+    <actions>
+        <group id="cn.com.hellowoodes.SoarGroup" class="io.github.hellowoodes.action.SoarActionGroup" compact="true"
+               text="Soar" popup="true">
+            <separator/>
+            <action id="SoarSQLAnalysis" class="io.github.hellowoodes.action.AnalysisAction" text="Analysis SQL"
+                    description="Analysis Selected SQL"/>
+            <add-to-group group-id="EditorPopupMenu" relative-to-action="EditorPopupMenu3" anchor="after"/>
+            <separator/>
+        </group>
+    </actions>
+</idea-plugin>
