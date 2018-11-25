@@ -1,4 +1,4 @@
-package io.github.hellowoodes.action;
+package io.github.hellowoodes.soar.action;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -11,6 +11,8 @@ import com.intellij.util.ui.UIUtil;
 import org.apache.commons.lang3.StringUtils;
 
 /**
+ * Analysis action
+ *
  * @author HelloWoodes
  * @date 2018/11/4 23:12
  */

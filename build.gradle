@@ -11,6 +11,20 @@ plugins {
 group 'io.github.helloworlde'
 version '1.0-SNAPSHOT'
 
+repositories {
+    maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
+    mavenCentral()
+}
+
+
+dependencies {
+    compile("org.apache.commons:commons-lang3:3.7")
+    compile("org.projectlombok:lombok:1.18.2")
+    compile("com.google.guava:guava:19.0")
+    compile("com.alibaba:fastjson:1.2.46")
+    compile("mysql:mysql-connector-java:5.1.47")
+}
+
 intellij {
     version '2018.2.4'
     pluginName 'Soar'
