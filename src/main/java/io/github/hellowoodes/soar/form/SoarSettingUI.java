@@ -89,6 +89,10 @@ public class SoarSettingUI extends JFrame {
     private JButton fileConfigYamlFileEditBtn;
     private JButton fileConfigBlacklistFileEditBtn;
     private TextFieldWithBrowseButton soarLocation;
+    private JPanel manualConfigPanel;
+    private JPanel fileConfigPanel;
+    private JRadioButton fileConfigBtn;
+    private JRadioButton manualConfigBtn;
 
     private final SoarSettings settings;
 
@@ -128,6 +132,22 @@ public class SoarSettingUI extends JFrame {
         loadFileConfigComponentListener(fileConfigBlackListLFilePath, fileConfigBlacklistFileEditBtn, "Path to Soar Black List Configuration File", "blacklist");
         loadDBComponentListener(onlineDBHost, onlineDBPort, onlineDatabase, onlineDBUser, onlineDBPassword, onlineDBUrl, onlineDBTestResultLabel, onlineDBTestBtn);
         loadDBComponentListener(testDBHost, testDBPort, testDatabase, testDBUser, testDBPassword, testDBUrl, testDBTestResultLabel, testDBTestBtn);
+        loadRadioComponentListener(fileConfigBtn, fileConfigPanel, manualConfigPanel);
+        loadRadioComponentListener(manualConfigBtn, manualConfigPanel, fileConfigPanel);
+    }
+
+    /**
+     * Switch configuration panel
+     *
+     * @param radioButton  Current radio button
+     * @param bindingPanel Current binding configuration panel
+     * @param anotherPanel Another not bind configuration panel
+     */
+    private void loadRadioComponentListener(JRadioButton radioButton, JPanel bindingPanel, JPanel anotherPanel) {
+        radioButton.addActionListener(e -> {
+            bindingPanel.setVisible(radioButton.isSelected());
+            anotherPanel.setVisible(!radioButton.isSelected());
+        });
     }
 
     /**
@@ -245,6 +265,13 @@ public class SoarSettingUI extends JFrame {
     private void loadSettings(SoarSettings settings) {
         // Soar location config
         soarLocation.setText(settings.getSoarLocation());
+
+        // Which type config
+        manualConfigBtn.setSelected(settings.isManualConfig());
+        manualConfigPanel.setVisible(settings.isManualConfig());
+        fileConfigBtn.setSelected(!settings.isManualConfig());
+        fileConfigPanel.setVisible(!settings.isManualConfig());
+
         // File config
         fileConfigYamlFilePath.setText(settings.getFileConfigYamlFilePath());
         fileConfigBlackListLFilePath.setText(settings.getFileConfigBlackListLFilePath());
@@ -285,7 +312,12 @@ public class SoarSettingUI extends JFrame {
      * @param settings Setting values object
      */
     public void apply(SoarSettings settings) {
+        // Soar config
         settings.setSoarLocation(soarLocation.getText());
+
+        // Config panel
+        settings.setManualConfig(manualConfigBtn.isSelected());
+
         // File config
         settings.setFileConfigYamlFilePath(fileConfigYamlFilePath.getText());
         settings.setFileConfigBlackListLFilePath(fileConfigBlackListLFilePath.getText());
@@ -319,6 +351,7 @@ public class SoarSettingUI extends JFrame {
      */
     public boolean isModified() {
         return !soarLocation.getText().equals(ObjectUtils.defaultIfNull(settings.getSoarLocation(), "")) ||
+                (manualConfigBtn.isSelected() != settings.isManualConfig()) ||
                 !onlineDBHost.getText().equals(ObjectUtils.defaultIfNull(settings.getOnlineDBHost(), "")) ||
                 !onlineDBPort.getText().equals(ObjectUtils.defaultIfNull(settings.getOnlineDBPort(), "")) ||
                 !onlineDatabase.getText().equals(ObjectUtils.defaultIfNull(settings.getOnlineDatabase(), "")) ||
@@ -353,24 +386,23 @@ public class SoarSettingUI extends JFrame {
     /**
      * Check if the configuration file path is valid
      *
-     * @param filePathInput Configuration component
-     * @param extension
+     * @param filePathInput   Configuration component
+     * @param expectExtension Expect file extension
      */
-    private void validateConfigFile(TextFieldWithBrowseButton filePathInput, String extension) throws Exception {
+    private void validateConfigFile(TextFieldWithBrowseButton filePathInput, String expectExtension) throws Exception {
         String filePath = filePathInput.getText();
         if (StringUtils.isBlank(filePath)) {
-            throw new IllegalArgumentException("Please input file path ");
+            throw new IllegalArgumentException("Please input file path");
         }
 
         if (!FileUtil.exists(filePath)) {
             throw new FileNotFoundException("Didn't find file in the path ".concat(filePath));
         }
 
-        if (!extension.equals(FileUtil.getExtension(filePath))) {
-            throw new IllegalArgumentException("File extension is not correct, expect is '"
-                    .concat(extension)
-                    .concat("' The real is : '")
-                    .concat(FileUtil.getExtension(filePath)));
+        String fileExtension = FileUtil.getExtension(filePath);
+        if (!expectExtension.equals(fileExtension)) {
+            String errorMessage = String.format("File extension is not correct, expect is '%s', The real is : '%s'", expectExtension, fileExtension);
+            throw new IllegalArgumentException(errorMessage);
         }
     }
 }

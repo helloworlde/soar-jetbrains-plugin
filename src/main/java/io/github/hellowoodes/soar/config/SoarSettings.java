@@ -41,6 +41,8 @@ public class SoarSettings implements PersistentStateComponent<SoarSettings> {
     /**
      * Config file path
      */
+    private String soarLocation;
+    private boolean manualConfig;
     private String fileConfigYamlFilePath;
     private String fileConfigBlackListLFilePath;
 
@@ -72,7 +74,6 @@ public class SoarSettings implements PersistentStateComponent<SoarSettings> {
     private boolean allowRepeatDBConfig;
     private boolean allowSampling;
     private boolean clearTempTable;
-    private String soarLocation;
 
     /**
      * Get SoarSetting instance
