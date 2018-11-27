@@ -49,7 +49,7 @@ public class DatabaseUtil {
     public static String parseDSN(JTextField host, JTextField port, JTextField user, JPasswordField password, JTextField database) {
         return user.getText()
                 .concat(":")
-                .concat(password.getText())
+                .concat(new String(password.getPassword()))
                 .concat("@")
                 .concat(host.getText())
                 .concat(":")
@@ -125,6 +125,18 @@ public class DatabaseUtil {
 
         if (StringUtils.isBlank(new String(password.getPassword()))) {
             throw new IllegalArgumentException("Please input password of Database");
+        }
+    }
+
+    /**
+     * Validate if SQL statement is valid
+     *
+     * @param content SQL statement
+     * @throws Exception Throw Exception when SQL is invalid
+     */
+    public static void validateSQL(String content) throws Exception {
+        if (StringUtils.isBlank(content)) {
+            throw new IllegalArgumentException("Please select valid SQL statement");
         }
     }
 }
