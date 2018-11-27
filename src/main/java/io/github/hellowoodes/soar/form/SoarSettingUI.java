@@ -29,6 +29,7 @@ import io.github.hellowoodes.soar.util.NotifyUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -36,9 +37,9 @@ import javax.swing.event.DocumentEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Optional;
 
-import static io.github.hellowoodes.soar.constant.Constant.FAILED;
-import static io.github.hellowoodes.soar.constant.Constant.SUCCESSFUL;
+import static io.github.hellowoodes.soar.constant.Constant.*;
 
 /**
  * Soar setting UI component
@@ -93,6 +94,8 @@ public class SoarSettingUI extends JFrame {
     private JPanel fileConfigPanel;
     private JRadioButton fileConfigBtn;
     private JRadioButton manualConfigBtn;
+    private JTextField connectTimeout;
+    private JTextField queryTimeout;
 
     private final SoarSettings settings;
 
@@ -279,14 +282,14 @@ public class SoarSettingUI extends JFrame {
         // Online Database config
         onlineDBHost.setText(settings.getOnlineDBHost());
         onlineDatabase.setText(settings.getOnlineDatabase());
-        onlineDBPort.setText(settings.getOnlineDBPort());
+        onlineDBPort.setText(StringUtils.defaultIfBlank(settings.getOnlineDBPort(), DEFAULT_DB_PORT));
         onlineDBUser.setText(settings.getOnlineDBUser());
         onlineDBPassword.setText(settings.getOnlineDBPassword());
         onlineDBUrl.setText(settings.getOnlineDBUrl());
 
         // Test Database config
         testDBHost.setText(settings.getTestDBHost());
-        testDBPort.setText(settings.getTestDBPort());
+        testDBPort.setText(StringUtils.defaultIfBlank(settings.getTestDBPort(), DEFAULT_DB_PORT));
         testDatabase.setText(settings.getTestDatabase());
         testDBUser.setText(settings.getTestDBUser());
         testDBPassword.setText(settings.getTestDBPassword());
@@ -296,6 +299,10 @@ public class SoarSettingUI extends JFrame {
         allowRepeatDBConfig.setSelected(settings.isAllowRepeatDBConfig());
         allowSampling.setSelected(settings.isAllowSampling());
         clearTempTable.setSelected(settings.isClearTempTable());
+
+        // Timeout config
+        connectTimeout.setText(StringUtils.defaultIfBlank(settings.getConnectionTimeout(), DEFAULT_TIMEOUT_STRING_VALUE));
+        queryTimeout.setText(StringUtils.defaultIfBlank(settings.getQueryTimeout(), DEFAULT_TIMEOUT_STRING_VALUE));
     }
 
 
@@ -324,7 +331,7 @@ public class SoarSettingUI extends JFrame {
 
         // Online Database config
         settings.setOnlineDBHost(onlineDBHost.getText());
-        settings.setOnlineDBPort(onlineDBPort.getText());
+        settings.setOnlineDBPort(getComponentNumValueOrDefault(onlineDBPort, DEFAULT_DB_PORT));
         settings.setOnlineDBUser(onlineDBUser.getText());
         settings.setOnlineDBPassword(new String(onlineDBPassword.getPassword()));
         settings.setOnlineDBUrl(DatabaseUtil.parseUrl(onlineDBHost, onlineDBPort, onlineDatabase));
@@ -332,7 +339,7 @@ public class SoarSettingUI extends JFrame {
 
         // Test Database config
         settings.setTestDBHost(testDBHost.getText());
-        settings.setTestDBPort(testDBPort.getText());
+        settings.setTestDBPort(getComponentNumValueOrDefault(testDBPort, DEFAULT_DB_PORT));
         settings.setTestDBUser(testDBUser.getText());
         settings.setTestDBPassword(new String(testDBPassword.getPassword()));
         settings.setTestDBUrl(DatabaseUtil.parseUrl(testDBHost, testDBPort, testDatabase));
@@ -342,6 +349,24 @@ public class SoarSettingUI extends JFrame {
         settings.setAllowRepeatDBConfig(allowRepeatDBConfig.isSelected());
         settings.setAllowSampling(allowSampling.isSelected());
         settings.setClearTempTable(clearTempTable.isSelected());
+
+        // Timeout config
+        settings.setConnectionTimeout(getComponentNumValueOrDefault(connectTimeout, DEFAULT_TIMEOUT_STRING_VALUE));
+        settings.setQueryTimeout(getComponentNumValueOrDefault(queryTimeout, DEFAULT_TIMEOUT_STRING_VALUE));
+    }
+
+    /**
+     * Get component number value
+     *
+     * @param component    The component
+     * @param defaultValue Default value
+     * @return Component value or default value if component value is invalid
+     */
+    private String getComponentNumValueOrDefault(JTextField component, String defaultValue) {
+        return Optional.of(component.getText())
+                .filter(StringUtils::isNoneBlank)
+                .filter(NumberUtils::isNumber)
+                .orElse(defaultValue);
     }
 
     /**
@@ -350,20 +375,30 @@ public class SoarSettingUI extends JFrame {
      * @return If modified
      */
     public boolean isModified() {
-        return !soarLocation.getText().equals(ObjectUtils.defaultIfNull(settings.getSoarLocation(), "")) ||
+        return !soarLocation.getText().equals(ObjectUtils.defaultIfNull(settings.getSoarLocation(), BLANK_STRING)) ||
                 (manualConfigBtn.isSelected() != settings.isManualConfig()) ||
-                !onlineDBHost.getText().equals(ObjectUtils.defaultIfNull(settings.getOnlineDBHost(), "")) ||
-                !onlineDBPort.getText().equals(ObjectUtils.defaultIfNull(settings.getOnlineDBPort(), "")) ||
-                !onlineDatabase.getText().equals(ObjectUtils.defaultIfNull(settings.getOnlineDatabase(), "")) ||
-                !onlineDBUser.getText().equals(ObjectUtils.defaultIfNull(settings.getOnlineDBUser(), "")) ||
-                !(new String(onlineDBPassword.getPassword())).equals(ObjectUtils.defaultIfNull(settings.getOnlineDBPassword(), "")) ||
-                !testDBHost.getText().equals(ObjectUtils.defaultIfNull(settings.getTestDBHost(), "")) ||
-                !testDBPort.getText().equals(ObjectUtils.defaultIfNull(settings.getTestDBPort(), "")) ||
-                !testDatabase.getText().equals(ObjectUtils.defaultIfNull(settings.getTestDatabase(), "")) ||
-                !testDBUser.getText().equals(ObjectUtils.defaultIfNull(settings.getTestDBUser(), "")) ||
-                !(new String(testDBPassword.getPassword())).equals(ObjectUtils.defaultIfNull(settings.getTestDBPassword(), "")) ||
-                !fileConfigYamlFilePath.getText().equals(ObjectUtils.defaultIfNull(settings.getFileConfigYamlFilePath(), "")) ||
-                !fileConfigBlackListLFilePath.getText().equals(ObjectUtils.defaultIfNull(settings.getFileConfigBlackListLFilePath(), ""));
+
+                !fileConfigYamlFilePath.getText().equals(ObjectUtils.defaultIfNull(settings.getFileConfigYamlFilePath(), BLANK_STRING)) ||
+                !fileConfigBlackListLFilePath.getText().equals(ObjectUtils.defaultIfNull(settings.getFileConfigBlackListLFilePath(), BLANK_STRING)) ||
+
+                !onlineDBHost.getText().equals(ObjectUtils.defaultIfNull(settings.getOnlineDBHost(), BLANK_STRING)) ||
+                !onlineDBPort.getText().equals(ObjectUtils.defaultIfNull(settings.getOnlineDBPort(), DEFAULT_DB_PORT)) ||
+                !onlineDatabase.getText().equals(ObjectUtils.defaultIfNull(settings.getOnlineDatabase(), BLANK_STRING)) ||
+                !onlineDBUser.getText().equals(ObjectUtils.defaultIfNull(settings.getOnlineDBUser(), BLANK_STRING)) ||
+                !(new String(onlineDBPassword.getPassword())).equals(ObjectUtils.defaultIfNull(settings.getOnlineDBPassword(), BLANK_STRING)) ||
+
+                !testDBHost.getText().equals(ObjectUtils.defaultIfNull(settings.getTestDBHost(), BLANK_STRING)) ||
+                !testDBPort.getText().equals(ObjectUtils.defaultIfNull(settings.getTestDBPort(), DEFAULT_DB_PORT)) ||
+                !testDatabase.getText().equals(ObjectUtils.defaultIfNull(settings.getTestDatabase(), BLANK_STRING)) ||
+                !testDBUser.getText().equals(ObjectUtils.defaultIfNull(settings.getTestDBUser(), BLANK_STRING)) ||
+                !(new String(testDBPassword.getPassword())).equals(ObjectUtils.defaultIfNull(settings.getTestDBPassword(), BLANK_STRING)) ||
+
+                (allowRepeatDBConfig.isSelected() != settings.isAllowRepeatDBConfig()) ||
+                (allowSampling.isSelected() != settings.isAllowSampling()) ||
+                (clearTempTable.isSelected() != settings.isClearTempTable()) ||
+
+                !connectTimeout.getText().equals(ObjectUtils.defaultIfNull(settings.getConnectionTimeout(), DEFAULT_TIMEOUT_STRING_VALUE)) ||
+                !queryTimeout.getText().equals(ObjectUtils.defaultIfNull(settings.getQueryTimeout(), DEFAULT_TIMEOUT_STRING_VALUE));
     }
 
 

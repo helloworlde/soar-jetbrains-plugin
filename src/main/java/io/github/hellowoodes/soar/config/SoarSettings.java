@@ -74,6 +74,8 @@ public class SoarSettings implements PersistentStateComponent<SoarSettings> {
     private boolean allowRepeatDBConfig;
     private boolean allowSampling;
     private boolean clearTempTable;
+    private String connectionTimeout;
+    private String queryTimeout;
 
     /**
      * Get SoarSetting instance
