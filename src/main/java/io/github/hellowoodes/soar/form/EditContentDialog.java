@@ -17,10 +17,14 @@
 
 package io.github.hellowoodes.soar.form;
 
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.ui.EditorTextField;
+import com.intellij.openapi.ui.DialogBuilder;
+import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -31,14 +35,11 @@ import java.awt.*;
  *
  * @author HelloWoodes
  */
-public class EditContentDialog extends DialogWrapper {
-    private JPanel contentPane;
-    private EditorTextField editorContentField;
+public class EditContentDialog {
+    private final Project project;
 
     EditContentDialog(@Nullable Project project) {
-        super(project);
-        setModal(true);
-        init();
+        this.project = project;
     }
 
 
@@ -48,25 +49,29 @@ public class EditContentDialog extends DialogWrapper {
      * @param path    Configuration file path
      * @param content Configuration file content
      */
-    public void showContentPane(String path, String content) {
-        this.setTitle(path);
-        this.setModal(true);
-        this.setSize(600, 400);
-        this.setCancelButtonText("Close");
-        this.setOKButtonText("Apply");
-        this.setAutoAdjustable(true);
-        this.setOKActionEnabled(true);
-        this.setResizable(true);
+    public void showContentDialog(String path, String content) {
+        String fileExtension = FileUtil.getExtension(path);
+        EditorFactory editorFactory = EditorFactory.getInstance();
+        Document document = editorFactory.createDocument(content);
+        document.setReadOnly(false);
 
-        editorContentField.setSize(600, 400);
-        editorContentField.setText(content);
-        editorContentField.setFileType(FileTypeManager.getInstance().getFileTypeByExtension(".yaml"));
-        editorContentField.setFont(Font.getFont("Source Code Pro"));
-    }
+        ApplicationManager.getApplication().runWriteAction(() -> {
+            document.setText(content);
+        });
 
-    @Nullable
-    @Override
-    protected JComponent createCenterPanel() {
-        return contentPane;
+        Editor editor = editorFactory.createEditor(document, null, FileTypeManager.getInstance().getFileTypeByExtension(fileExtension), true);
+
+        JComponent component = editor.getComponent();
+        component.setEnabled(true);
+        component.setPreferredSize(new Dimension(640, 480));
+        component.setAutoscrolls(true);
+
+        JComponent contentComponent = editor.getContentComponent();
+
+        DialogBuilder dialog = new DialogBuilder(project);
+        dialog.setTitle(path);
+        dialog.centerPanel(component).setPreferredFocusComponent(contentComponent);
+        dialog.addOkAction();
+        dialog.show();
     }
 }

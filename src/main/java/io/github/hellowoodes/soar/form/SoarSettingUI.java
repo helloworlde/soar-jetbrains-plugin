@@ -411,10 +411,9 @@ public class SoarSettingUI extends JFrame {
         try {
             String content = FileUtil.loadFile(new File(path));
             EditContentDialog editContentDialog = new EditContentDialog(null);
-            editContentDialog.showContentPane(path, content);
-            editContentDialog.show();
+            editContentDialog.showContentDialog(path, content);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 
