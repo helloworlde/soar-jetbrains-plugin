@@ -59,7 +59,7 @@ public class EditContentDialog {
             document.setText(content);
         });
 
-        Editor editor = editorFactory.createEditor(document, null, FileTypeManager.getInstance().getFileTypeByExtension(fileExtension), true);
+        Editor editor = editorFactory.createEditor(document, null, FileTypeManager.getInstance().getFileTypeByExtension(fileExtension), false);
 
         JComponent component = editor.getComponent();
         component.setEnabled(true);
