@@ -17,7 +17,16 @@
 
 package io.github.hellowoodes.soar.util;
 
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.ui.popup.Balloon;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.ui.awt.RelativePoint;
+import com.intellij.ui.components.JBLabel;
+import com.intellij.util.ui.UIUtil;
+import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.Optional;
@@ -66,7 +75,7 @@ public class NotifyUtil {
      * @param icon    Message icon
      */
     public static void showMessageDialog(String title, String message, Icon icon) {
-        Messages.showMessageDialog(message, title, icon);
+        ApplicationManager.getApplication().invokeLater(() -> Messages.showMessageDialog(message, title, icon));
     }
 
     /**
@@ -80,5 +89,45 @@ public class NotifyUtil {
         return optionalException.map(cause -> ex.getCause())
                 .map(Throwable::getMessage)
                 .orElse(ex.getMessage());
+    }
+
+    /**
+     * Show tip dialog
+     *
+     * @param title   Tip title
+     * @param content Tip content
+     */
+    public static void showTipsDialog(String title, String content) {
+        ApplicationManager.getApplication().invokeLater(() -> {
+            JBLabel label = new JBLabel();
+            label.setText(content);
+            DialogBuilder dialog = new DialogBuilder();
+            dialog.setTitle(title);
+            dialog.centerPanel(label);
+            dialog.addOkAction();
+            dialog.show();
+        });
+    }
+
+    /**
+     * Show notify popup around component
+     *
+     * @param component      The component which show popup
+     * @param messageContent Popup message content
+     */
+    public static void showNotifyPopup(@NotNull JComponent component, String messageContent) {
+        if (StringUtils.isNoneBlank(messageContent)) {
+            ApplicationManager.getApplication().invokeLater(() -> {
+                JBPopupFactory factory = JBPopupFactory.getInstance();
+                factory.createHtmlTextBalloonBuilder(messageContent, null, UIUtil.getWindowColor(), null)
+                        .setBorderColor(UIUtil.getWindowColor())
+                        .setShadow(true)
+                        .setFadeoutTime(5000)
+                        .setDialogMode(true)
+                        .setHideOnAction(false)
+                        .createBalloon()
+                        .show(RelativePoint.getCenterOf(component), Balloon.Position.below);
+            });
+        }
     }
 }
