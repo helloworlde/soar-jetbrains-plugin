@@ -18,14 +18,20 @@
 package io.github.hellowoodes.soar.form;
 
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.JBColor;
+import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBPanel;
 import io.github.hellowoodes.soar.config.SoarSettings;
+import io.github.hellowoodes.soar.util.CommandUtil;
 import io.github.hellowoodes.soar.util.DatabaseUtil;
 import io.github.hellowoodes.soar.util.NotifyUtil;
+import io.github.hellowoodes.soar.util.SoarUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -37,6 +43,8 @@ import javax.swing.event.DocumentEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static io.github.hellowoodes.soar.constant.Constant.*;
@@ -49,6 +57,7 @@ import static io.github.hellowoodes.soar.constant.Constant.*;
  */
 @Slf4j
 public class SoarSettingUI extends JFrame {
+
     private JPanel rootPanel;
 
     /**
@@ -59,9 +68,9 @@ public class SoarSettingUI extends JFrame {
     private JTextField onlineDatabase;
     private JTextField onlineDBUser;
     private JPasswordField onlineDBPassword;
-    private JLabel onlineDBUrl;
+    private JBLabel onlineDBUrl;
     private JButton onlineDBTestBtn;
-    private JLabel onlineDBTestResultLabel;
+    private JBLabel onlineDBTestResultLabel;
 
     /**
      * Test Database config component
@@ -71,9 +80,9 @@ public class SoarSettingUI extends JFrame {
     private JTextField testDatabase;
     private JTextField testDBUser;
     private JPasswordField testDBPassword;
-    private JLabel testDBUrl;
+    private JBLabel testDBUrl;
     private JButton testDBTestBtn;
-    private JLabel testDBTestResultLabel;
+    private JBLabel testDBTestResultLabel;
 
     /**
      * Other config component
@@ -83,19 +92,34 @@ public class SoarSettingUI extends JFrame {
     private JCheckBox clearTempTable;
 
     /**
+     * Timeout config component
+     */
+    private JTextField connectTimeout;
+    private JTextField queryTimeout;
+
+    /**
+     * Soar config component
+     */
+    private TextFieldWithBrowseButton soarLocationBrowseBtn;
+    private JButton soarCheckBtn;
+    private JBLabel soarCheckResultLabel;
+
+    /**
+     * Config type component
+     */
+    private JRadioButton fileConfigBtn;
+    private JRadioButton manualConfigBtn;
+
+    /**
      * File config component
      */
     private TextFieldWithBrowseButton fileConfigYamlFilePath;
     private TextFieldWithBrowseButton fileConfigBlackListLFilePath;
     private JButton fileConfigYamlFileEditBtn;
     private JButton fileConfigBlacklistFileEditBtn;
-    private TextFieldWithBrowseButton soarLocation;
+
     private JPanel manualConfigPanel;
     private JPanel fileConfigPanel;
-    private JRadioButton fileConfigBtn;
-    private JRadioButton manualConfigBtn;
-    private JTextField connectTimeout;
-    private JTextField queryTimeout;
 
     private final SoarSettings settings;
 
@@ -130,13 +154,92 @@ public class SoarSettingUI extends JFrame {
      * Load listener to component
      */
     private void loadListener() {
-        loadFileConfigComponentListener(soarLocation, null, "Path to Soar", null);
+        loadFileConfigComponentListener(soarLocationBrowseBtn, null, "Path to Soar", null);
         loadFileConfigComponentListener(fileConfigYamlFilePath, fileConfigYamlFileEditBtn, "Path to Soar Configuration File", "yaml");
         loadFileConfigComponentListener(fileConfigBlackListLFilePath, fileConfigBlacklistFileEditBtn, "Path to Soar Black List Configuration File", "blacklist");
+
         loadDBComponentListener(onlineDBHost, onlineDBPort, onlineDatabase, onlineDBUser, onlineDBPassword, onlineDBUrl, onlineDBTestResultLabel, onlineDBTestBtn);
         loadDBComponentListener(testDBHost, testDBPort, testDatabase, testDBUser, testDBPassword, testDBUrl, testDBTestResultLabel, testDBTestBtn);
+
         loadRadioComponentListener(fileConfigBtn, fileConfigPanel, manualConfigPanel);
         loadRadioComponentListener(manualConfigBtn, manualConfigPanel, fileConfigPanel);
+
+        loadSoarCheckComponentListener(soarCheckBtn, soarCheckResultLabel);
+    }
+
+
+    /**
+     * Load Soar check listener
+     *
+     * @param checkBtn    Check button
+     * @param resultLabel Result message label
+     */
+    private void loadSoarCheckComponentListener(JButton checkBtn, JBLabel resultLabel) {
+        checkBtn.addActionListener(event -> {
+            ProgressManager.getInstance().run(new Task.Backgroundable(null, "Executing Format SQL") {
+                @Override
+                public void run(@NotNull ProgressIndicator progressIndicator) {
+                    try {
+                        hideResultLabel(resultLabel);
+                        String soarLocation = soarLocationBrowseBtn.getText();
+                        if (StringUtils.isBlank(soarLocation)) {
+                            throw new IllegalArgumentException("Please input Soar location first");
+                        }
+
+                        progressIndicator.setText("Soar: Start check Soar");
+
+                        progressIndicator.setText("Soar: Get execute command");
+                        List<String> commandList = new ArrayList<>();
+                        commandList.add(soarLocation);
+                        commandList.add(VERSION_KEY);
+
+                        progressIndicator.setText("Soar: Executing check version command");
+                        String result = CommandUtil.executeCommand(commandList);
+
+                        progressIndicator.setText("Soar: Handler check result message");
+                        result = SoarUtil.convertResultAsHtml(result);
+
+                        modifyResultLabel(resultLabel, true, true, SUCCESSFUL, null);
+                        resultLabel.setToolTipText(result);
+                        progressIndicator.setText("Soar: Check action completed");
+                    } catch (Exception e) {
+                        try {
+                            progressIndicator.setText("Soar: Getting latest Soar download url");
+                            String content = SoarUtil.getSoarInstallContent();
+                            NotifyUtil.showTipsDialog("Soar is not installed correctly", content);
+                        } catch (Exception e1) {
+                            String errorMessage = NotifyUtil.getExceptionMessage(e1);
+                            NotifyUtil.showErrorMessageDialog("Soar check failed", errorMessage);
+                        }
+                    }
+                }
+            });
+        });
+    }
+
+    /**
+     * Hide result label
+     *
+     * @param resultLabel Result label component
+     */
+    private void hideResultLabel(@NotNull JBLabel resultLabel) {
+        modifyResultLabel(resultLabel, false, false, SUCCESSFUL, null);
+    }
+
+    /**
+     * Change database connection test result label text
+     *
+     * @param resultLabel   Database connection test result label component
+     * @param isShow        If show result label
+     * @param isSuccess     If connection test is success
+     * @param content       Label text content
+     * @param detailMessage Label text content
+     */
+    private void modifyResultLabel(@NotNull JBLabel resultLabel, @NotNull Boolean isShow, @NotNull Boolean isSuccess, String content, String detailMessage) {
+        resultLabel.setVisible(isShow);
+        resultLabel.setText(isShow ? content : null);
+        resultLabel.setToolTipText(isShow ? detailMessage : null);
+        resultLabel.setForeground(isSuccess ? JBColor.GREEN : JBColor.RED);
     }
 
     /**
@@ -147,7 +250,7 @@ public class SoarSettingUI extends JFrame {
      * @param anotherPanel Another not bind configuration panel
      */
     private void loadRadioComponentListener(JRadioButton radioButton, JPanel bindingPanel, JPanel anotherPanel) {
-        radioButton.addActionListener(e -> {
+        radioButton.addActionListener(event -> {
             bindingPanel.setVisible(radioButton.isSelected());
             anotherPanel.setVisible(!radioButton.isSelected());
         });
@@ -165,7 +268,7 @@ public class SoarSettingUI extends JFrame {
      * @param resultLabel Database connection test result label component
      * @param button      Database connection test button component
      */
-    private void loadDBComponentListener(JTextField host, JTextField port, JTextField database, JTextField user, JPasswordField password, JLabel url, JLabel resultLabel, JButton button) {
+    private void loadDBComponentListener(JTextField host, JTextField port, JTextField database, JTextField user, JPasswordField password, JBLabel url, JBLabel resultLabel, JButton button) {
         DocumentAdapter documentAdapter = new DocumentAdapter() {
             @Override
             protected void textChanged(@NotNull DocumentEvent documentEvent) {
@@ -179,18 +282,17 @@ public class SoarSettingUI extends JFrame {
         user.getDocument().addDocumentListener(documentAdapter);
         password.getDocument().addDocumentListener(documentAdapter);
 
-        button.addActionListener(e -> {
+        button.addActionListener(event -> {
             try {
                 DatabaseUtil.validateParam(host, port, user, password);
                 boolean connectionSuccess = DatabaseUtil.validateConnection(url.getText(), user.getText(), new String(password.getPassword()));
                 if (connectionSuccess) {
-                    modifyConnectionResultLabel(resultLabel, true, true, SUCCESSFUL);
+                    modifyResultLabel(resultLabel, true, true, SUCCESSFUL, null);
                 } else {
                     NotifyUtil.showDBErrorMessageDialog("Validate Connection Result Failed");
                 }
-            } catch (Exception ex) {
-                showConnectionErrorMessage(ex, resultLabel);
-                log.error(ex.getMessage(), e);
+            } catch (Exception e) {
+                showConnectionErrorMessage(e, resultLabel);
             }
         });
     }
@@ -207,7 +309,7 @@ public class SoarSettingUI extends JFrame {
         filePathInput.addBrowseFolderListener(title, null, null,
                 FileChooserDescriptorFactory.createSingleFileDescriptor(extension));
         if (editBtn != null) {
-            editBtn.addActionListener(e -> {
+            editBtn.addActionListener(event -> {
                 try {
                     validateConfigFile(filePathInput, extension);
                     showEditFileDialog(filePathInput.getText());
@@ -225,10 +327,10 @@ public class SoarSettingUI extends JFrame {
      * @param ex          Exception object
      * @param resultLabel Database connection test result label
      */
-    private void showConnectionErrorMessage(Exception ex, JLabel resultLabel) {
-        modifyConnectionResultLabel(resultLabel, true, false, FAILED);
-        String message = NotifyUtil.getExceptionMessage(ex);
-        NotifyUtil.showDBErrorMessageDialog(message);
+    private void showConnectionErrorMessage(Exception ex, JBLabel resultLabel) {
+        String detailMessage = NotifyUtil.getExceptionMessage(ex);
+        modifyResultLabel(resultLabel, true, false, FAILED, detailMessage);
+        NotifyUtil.showDBErrorMessageDialog(detailMessage);
     }
 
 
@@ -241,24 +343,11 @@ public class SoarSettingUI extends JFrame {
      * @param url         Database connection url component
      * @param resultLabel Database connection test result label component
      */
-    private void modifyDBUrl(JTextField host, JTextField port, JTextField database, JLabel url, JLabel resultLabel) {
+    private void modifyDBUrl(JTextField host, JTextField port, JTextField database, JBLabel url, JBLabel resultLabel) {
         url.setText(DatabaseUtil.parseUrl(host, port, database));
-        modifyConnectionResultLabel(resultLabel, false, false, null);
+        hideResultLabel(resultLabel);
     }
 
-    /**
-     * Change database connection test result label text
-     *
-     * @param resultLabel Database connection test result label component
-     * @param isShow      If show result label
-     * @param isSuccess   If connection test is success
-     * @param content     Label text content
-     */
-    private void modifyConnectionResultLabel(JLabel resultLabel, Boolean isShow, Boolean isSuccess, String content) {
-        resultLabel.setVisible(isShow);
-        resultLabel.setText(isShow ? content : null);
-        resultLabel.setForeground(isSuccess ? JBColor.GREEN : JBColor.RED);
-    }
 
     /**
      * Set setting value to component
@@ -267,7 +356,7 @@ public class SoarSettingUI extends JFrame {
      */
     private void loadSettings(SoarSettings settings) {
         // Soar location config
-        soarLocation.setText(settings.getSoarLocation());
+        soarLocationBrowseBtn.setText(settings.getSoarLocation());
 
         // Which type config
         manualConfigBtn.setSelected(settings.isManualConfig());
@@ -320,7 +409,7 @@ public class SoarSettingUI extends JFrame {
      */
     public void apply(SoarSettings settings) {
         // Soar config
-        settings.setSoarLocation(soarLocation.getText());
+        settings.setSoarLocation(soarLocationBrowseBtn.getText());
 
         // Config panel
         settings.setManualConfig(manualConfigBtn.isSelected());
@@ -375,7 +464,7 @@ public class SoarSettingUI extends JFrame {
      * @return If modified
      */
     public boolean isModified() {
-        return !soarLocation.getText().equals(ObjectUtils.defaultIfNull(settings.getSoarLocation(), BLANK_STRING)) ||
+        return !soarLocationBrowseBtn.getText().equals(ObjectUtils.defaultIfNull(settings.getSoarLocation(), BLANK_STRING)) ||
                 (manualConfigBtn.isSelected() != settings.isManualConfig()) ||
 
                 !fileConfigYamlFilePath.getText().equals(ObjectUtils.defaultIfNull(settings.getFileConfigYamlFilePath(), BLANK_STRING)) ||

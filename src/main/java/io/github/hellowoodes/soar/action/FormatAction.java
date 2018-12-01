@@ -61,23 +61,23 @@ public class FormatAction extends AnAction {
             @Override
             public void run(@NotNull ProgressIndicator progressIndicator) {
                 try {
-                    progressIndicator.setText("Start parse SQL");
+                    progressIndicator.setText("Soar: Start parse SQL");
 
-                    progressIndicator.setText("Validating SQL");
+                    progressIndicator.setText("Soar: Validating SQL");
                     DatabaseUtil.validateSQL(selectedText);
 
-                    progressIndicator.setText("Splicing execute command");
+                    progressIndicator.setText("Soar: Splicing execute command");
                     List<String> commandList = CommandUtil.getCommandList(selectedText, SoarAction.FORMAT);
 
-                    progressIndicator.setText("Executing format SQL command");
+                    progressIndicator.setText("Soar: Executing format SQL command");
                     String result = CommandUtil.executeCommand(commandList);
 
-                    progressIndicator.setText("Replace selected sql as formatted");
+                    progressIndicator.setText("Soar: Replace selected sql as formatted");
                     WriteCommandAction.runWriteCommandAction(project, () ->
                             document.replaceString(start, end, result)
                     );
 
-                    progressIndicator.setText("Format SQL completed");
+                    progressIndicator.setText("Soar: Format SQL completed");
                 } catch (Exception e) {
                     log.error(e.getMessage(), e);
                     NotifyUtil.showErrorMessageDialog("Invalid SQL content", NotifyUtil.getExceptionMessage(e));

@@ -55,8 +55,29 @@ public class Constant {
     public static final String SAMPLING_KEY = "-sampling";
 
     public static final String REPORT_TYPE_KEY = "-report-type";
+    public static final String VERSION_KEY = "-version";
     public static final String QUERY_KEY = "-query";
     public static final String QUERY_TIMEOUT_KEY = "-query-time-out";
+
+    public static final String HTML_TAG_PREFIX = "<html>";
+    public static final String HTML_TAG_SUFFIX = "</html>";
+    public static final String HTML_PARAGRAPH_TEMPLATE = "<p>%s</p>";
+
+    public static final String SYSTEM_PROPERTIES_USER_HOME = "user.home";
+    public static final String SYSTEM_PROPERTIES_OS_NAME = "os.name";
+    public static final String MAC = "mac";
+    public static final String DARWIN = "darwin";
+    public static final String WINDOWS = "windows";
+    public static final String LINUX = "linux";
+
+    public static final String SOAR_RELEASE_URL = "https://api.github.com/repos/XiaoMi/Soar/releases";
+    public static final String DEFAULT_SOAR_DOWNLOAD_URL = "https://github.com/XiaoMi/soar/releases/download/0.9.0/soar.linux-amd64";
+    public static final String ASSETS_KEY = "assets";
+    public static final String NAME_KEY = "name";
+    public static final String SOAR_PREFIX_KEY = "soar.";
+    public static final String AMD_SUFFIX_KEY = "-amd64";
+    public static final String BROWSER_DOWNLOAD_URL_KEY = "browser_download_url";
+    public static final String INSTALL_COMMAND_TEMPLATE = "<html><body><div style=\"margin: 10px;\"><div><p>You can reference <label>https://github.com/XiaoMi/Soar</label> for install guidance and get latest version</p><br><p>Or you can execute command like below:</p><br><p><code>wget %s -O %s/.soar/soar</code><br><code>chmod a+x %s/.soar/soar</code></p><br><p>Then input <code>%s/.soar/soar</code> to here</p></div></div></body></html>";
 
 
 }

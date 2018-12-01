@@ -32,20 +32,25 @@ public enum SoarAction {
     /**
      * Analysis action
      */
-    ANALYSIS("Analysis", ReportType.JSON),
+    ANALYSIS("Analysis", ReportType.JSON, true),
     /**
      * Format action
      */
-    FORMAT("format", ReportType.PRETTY),
+    FORMAT("format", ReportType.PRETTY, true),
     /**
      * Export HTML
      */
-    EXPORT_HTML("ExportHTML", ReportType.HTML),
+    EXPORT_HTML("ExportHTML", ReportType.HTML, true),
     /**
      * Export Markdown
      */
-    EXPORT_MARKDOWN("ExportMarkdown", ReportType.MARKDOWN);
+    EXPORT_MARKDOWN("ExportMarkdown", ReportType.MARKDOWN, true),
+    /**
+     * Version
+     */
+    CHECK_VERSION("CheckVersion", null, false);
 
     private String actionName;
     private ReportType reportType;
+    private Boolean query;
 }
