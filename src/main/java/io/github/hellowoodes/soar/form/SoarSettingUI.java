@@ -427,6 +427,7 @@ public class SoarSettingUI extends JFrame {
         settings.setOnlineDBHost(onlineDBHost.getText());
         settings.setOnlineDBPort(getComponentNumValueOrDefault(onlineDBPort, DEFAULT_DB_PORT));
         settings.setOnlineDBUser(onlineDBUser.getText());
+        settings.setOnlineDatabase(onlineDatabase.getText());
         settings.setOnlineDBPassword(new String(onlineDBPassword.getPassword()));
         settings.setOnlineDBUrl(DatabaseUtil.parseUrl(onlineDBHost, onlineDBPort, onlineDatabase));
         settings.setOnlineDSN(DatabaseUtil.parseDSN(onlineDBHost, onlineDBPort, onlineDBUser, onlineDBPassword, onlineDatabase));
@@ -435,6 +436,7 @@ public class SoarSettingUI extends JFrame {
         settings.setTestDBHost(testDBHost.getText());
         settings.setTestDBPort(getComponentNumValueOrDefault(testDBPort, DEFAULT_DB_PORT));
         settings.setTestDBUser(testDBUser.getText());
+        settings.setTestDatabase(testDatabase.getText());
         settings.setTestDBPassword(new String(testDBPassword.getPassword()));
         settings.setTestDBUrl(DatabaseUtil.parseUrl(testDBHost, testDBPort, testDatabase));
         settings.setTestDSN(DatabaseUtil.parseDSN(testDBHost, testDBPort, testDBUser, testDBPassword, testDatabase));
