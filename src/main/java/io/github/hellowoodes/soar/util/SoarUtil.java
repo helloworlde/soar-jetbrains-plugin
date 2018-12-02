@@ -36,7 +36,7 @@ public class SoarUtil {
      * @return Content with HTML tag
      */
     public static String convertResultAsHtml(String content) {
-        String[] resultParagraphs = content.split("\n");
+        String[] resultParagraphs = content.split(LINE_BREAK);
         StringBuilder resultBuilder = new StringBuilder();
 
         resultBuilder.append(HTML_TAG_PREFIX);

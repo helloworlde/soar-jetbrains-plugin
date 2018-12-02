@@ -32,7 +32,6 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import static io.github.hellowoodes.soar.constant.Constant.*;
@@ -64,10 +63,10 @@ public class CommandUtil {
 
             String line;
             while ((line = bufferedReader.readLine()) != null) {
-                result.append(line).append("\n");
+                result.append(line).append(LINE_BREAK);
             }
             while ((line = errorReader.readLine()) != null) {
-                result.append(line).append("\n");
+                result.append(line).append(LINE_BREAK);
             }
         }
 
@@ -81,9 +80,8 @@ public class CommandUtil {
      * @param sqlContent SQL for action
      * @param action     Action type
      * @return Command list for the action
-     * @throws Exception Throw exception when failed
      */
-    public static List<String> getCommandList(@Nullable String sqlContent, @NotNull SoarAction action) throws Exception {
+    public static List<String> getCommandList(@Nullable String sqlContent, @NotNull SoarAction action) {
         SoarSettings settings = getSoarSetting();
         List<String> commandList = new ArrayList<>();
         commandList.add(settings.getSoarLocation());
@@ -130,9 +128,7 @@ public class CommandUtil {
      */
     private static void getQueryContentCommand(String sqlContent, List<String> commandList, SoarAction action) {
         // Report type
-        commandList.add(REPORT_TYPE_KEY);
-        commandList.add(action.getReportType().getType());
-
+        addCommandIfValid(commandList, REPORT_TYPE_KEY, action.getReportType().getType());
         // SQL Content
         commandList.add(QUERY_KEY);
         commandList.add(sqlContent);
@@ -147,11 +143,8 @@ public class CommandUtil {
      */
     private static void getFileConfig(SoarSettings settings, List<String> commandList) {
         // File Config
-        commandList.add(CONFIG_FILE_LOCATION_KEY);
-        commandList.add(getSettingParam(settings.getFileConfigYamlFilePath(), "Please set config yaml path"));
-
-        commandList.add(BLACKLIST_FILE_LOCATION_KEY);
-        commandList.add(getSettingParam(settings.getFileConfigBlackListLFilePath(), "Please set blacklist file path"));
+        addCommandIfValid(commandList, CONFIG_FILE_LOCATION_KEY, settings.getFileConfigYamlFilePath());
+        addCommandIfValid(commandList, BLACKLIST_FILE_LOCATION_KEY, settings.getFileConfigBlackListLFilePath());
     }
 
     /**
@@ -162,66 +155,35 @@ public class CommandUtil {
      */
     private static void getManualConfig(SoarSettings settings, List<String> commandList) {
         // Manual Config
-        commandList.add(ONLINE_DSN_KEY);
-        commandList.add(getSettingParam(settings.getOnlineDSN(), "Online Database config invalid"));
+        addCommandIfValid(commandList, EXPLAIN_TYPE_KEY, ExplainType.TRADITIONAL.getType());
+        addCommandIfValid(commandList, EXPLAIN_FORMAT_KEY, ExplainFormat.JSON.getType());
+        addCommandIfValid(commandList, EXPLAIN_SQL_REPORT_TYPE_KEY, ExplainSQLReportType.SAMPLE.getType());
 
-        commandList.add(TEST_DSN_KEY);
-        commandList.add(getSettingParam(settings.getTestDSN(), "Test Database config invalid"));
+        addCommandIfValid(commandList, ONLINE_DSN_KEY, settings.getOnlineDSN());
+        addCommandIfValid(commandList, TEST_DSN_KEY, settings.getTestDSN());
 
-        commandList.add(EXPLAIN_TYPE_KEY);
-        commandList.add(ExplainType.TRADITIONAL.getType());
-
-        commandList.add(EXPLAIN_FORMAT_KEY);
-        commandList.add(ExplainFormat.JSON.getType());
-
-        commandList.add(EXPLAIN_SQL_REPORT_TYPE_KEY);
-        commandList.add(ExplainSQLReportType.SAMPLE.getType());
-
-        commandList.addAll(addCommandIfValid(DROP_TEMP_TABLE_KEY, settings.isClearTempTable()));
-        commandList.addAll(addCommandIfValid(SAMPLING_KEY, settings.isAllowSampling()));
-        commandList.addAll(addCommandIfValid(ALLOW_ONLINE_AS_TEST_KEY, settings.isAllowRepeatDBConfig()));
-        commandList.addAll(addCommandIfValid(QUERY_TIMEOUT_KEY, settings.getQueryTimeout()));
-        commandList.addAll(addCommandIfValid(CONNECTION_TIMEOUT_KEY, settings.getConnectionTimeout()));
+        addCommandIfValid(commandList, DROP_TEMP_TABLE_KEY, settings.isClearTempTable());
+        addCommandIfValid(commandList, SAMPLING_KEY, settings.isAllowSampling());
+        addCommandIfValid(commandList, ALLOW_ONLINE_AS_TEST_KEY, settings.isAllowRepeatDBConfig());
+        addCommandIfValid(commandList, QUERY_TIMEOUT_KEY, settings.getQueryTimeout());
+        addCommandIfValid(commandList, CONNECTION_TIMEOUT_KEY, settings.getConnectionTimeout());
     }
 
     /**
      * Add command to list when valid
      *
+     * @param commandList The command list
      * @param configKey   The command key
      * @param configValue The command value
-     * @return The command list for execute
      */
-    private static List<String> addCommandIfValid(String configKey, Object configValue) {
-        List<String> commandList = new ArrayList<>();
-
+    private static void addCommandIfValid(List<String> commandList, String configKey, Object configValue) {
         Optional<String> optional = Optional
                 .ofNullable(configValue)
-                .filter(Objects::nonNull)
                 .map(String::valueOf)
                 .filter(s -> StringUtils.isNoneBlank(s.trim()))
                 .map(String::valueOf);
 
-        if (optional.isPresent()) {
-            commandList.add(configKey);
-            commandList.add(optional.get());
-        }
-
-        return commandList;
-    }
-
-    /**
-     * Get setting parameter
-     *
-     * @param paramName    Setting parameter name
-     * @param errorMessage Error message for can't get the key
-     * @return The command key if valid
-     */
-    private static String getSettingParam(String paramName, String errorMessage) {
-        Optional<String> optional = Optional.of(paramName);
-        return optional
-                .filter(StringUtils::isNoneBlank)
-                .map(String::trim)
-                .orElseThrow(() -> new IllegalArgumentException(errorMessage));
+        optional.ifPresent(v -> commandList.add(configKey.concat(EQUAL_LABEL).concat(v)));
     }
 
     /**

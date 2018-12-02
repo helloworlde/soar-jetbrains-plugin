@@ -26,6 +26,8 @@ package io.github.hellowoodes.soar.constant;
 public class Constant {
 
     public static final String BLANK_STRING = "";
+    public static final String EQUAL_LABEL = "=";
+    public static final String LINE_BREAK = "\n";
 
     public static final String SOAR_PLUGIN_ID = "io.github.helloworlde.soar";
     public static final String SOAR_DISPLAY_NAME = "Soar";
