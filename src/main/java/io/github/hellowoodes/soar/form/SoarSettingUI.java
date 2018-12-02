@@ -17,6 +17,7 @@
 
 package io.github.hellowoodes.soar.form;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -100,7 +101,7 @@ public class SoarSettingUI extends JFrame {
     /**
      * Soar config component
      */
-    private TextFieldWithBrowseButton soarLocationBrowseBtn;
+    private TextFieldWithBrowseButton soarLocationPath;
     private JButton soarCheckBtn;
     private JBLabel soarCheckResultLabel;
 
@@ -154,7 +155,7 @@ public class SoarSettingUI extends JFrame {
      * Load listener to component
      */
     private void loadListener() {
-        loadFileConfigComponentListener(soarLocationBrowseBtn, null, "Path to Soar", null);
+        loadFileConfigComponentListener(soarLocationPath, null, "Path to Soar", null);
         loadFileConfigComponentListener(fileConfigYamlFilePath, fileConfigYamlFileEditBtn, "Path to Soar Configuration File", "yaml");
         loadFileConfigComponentListener(fileConfigBlackListLFilePath, fileConfigBlacklistFileEditBtn, "Path to Soar Black List Configuration File", "blacklist");
 
@@ -181,7 +182,7 @@ public class SoarSettingUI extends JFrame {
                 public void run(@NotNull ProgressIndicator progressIndicator) {
                     try {
                         hideResultLabel(resultLabel);
-                        String soarLocation = soarLocationBrowseBtn.getText();
+                        String soarLocation = soarLocationPath.getText();
                         if (StringUtils.isBlank(soarLocation)) {
                             throw new IllegalArgumentException("Please input Soar location first");
                         }
@@ -207,6 +208,9 @@ public class SoarSettingUI extends JFrame {
                             progressIndicator.setText("Soar: Getting latest Soar download url");
                             String content = SoarUtil.getSoarInstallContent();
                             NotifyUtil.showTipsDialog("Soar is not installed correctly", content);
+                            ApplicationManager.getApplication().executeOnPooledThread(() -> SoarUtil.initialConfigFilePath(fileConfigYamlFilePath, CONFIG_YAML_RELATIVE_PATH, SOAR_CONFIG_YAML_TEMPLATE));
+                            ApplicationManager.getApplication().executeOnPooledThread(() -> SoarUtil.initialConfigFilePath(fileConfigBlackListLFilePath, CONFIG_BLACKLIST_RELATIVE_PATH, BLANK_STRING));
+                            ApplicationManager.getApplication().executeOnPooledThread(() -> SoarUtil.initialConfigFilePath(soarLocationPath, SOAR_RELATIVE_PATH, null));
                         } catch (Exception e1) {
                             String errorMessage = NotifyUtil.getExceptionMessage(e1);
                             NotifyUtil.showErrorMessageDialog("Soar check failed", errorMessage);
@@ -284,6 +288,7 @@ public class SoarSettingUI extends JFrame {
 
         button.addActionListener(event -> {
             try {
+                hideResultLabel(resultLabel);
                 DatabaseUtil.validateParam(host, port, user, password);
                 boolean connectionSuccess = DatabaseUtil.validateConnection(url.getText(), user.getText(), new String(password.getPassword()));
                 if (connectionSuccess) {
@@ -356,7 +361,7 @@ public class SoarSettingUI extends JFrame {
      */
     private void loadSettings(SoarSettings settings) {
         // Soar location config
-        soarLocationBrowseBtn.setText(settings.getSoarLocation());
+        soarLocationPath.setText(settings.getSoarLocation());
 
         // Which type config
         manualConfigBtn.setSelected(settings.isManualConfig());
@@ -409,7 +414,7 @@ public class SoarSettingUI extends JFrame {
      */
     public void apply(SoarSettings settings) {
         // Soar config
-        settings.setSoarLocation(soarLocationBrowseBtn.getText());
+        settings.setSoarLocation(soarLocationPath.getText());
 
         // Config panel
         settings.setManualConfig(manualConfigBtn.isSelected());
@@ -464,7 +469,7 @@ public class SoarSettingUI extends JFrame {
      * @return If modified
      */
     public boolean isModified() {
-        return !soarLocationBrowseBtn.getText().equals(ObjectUtils.defaultIfNull(settings.getSoarLocation(), BLANK_STRING)) ||
+        return !soarLocationPath.getText().equals(ObjectUtils.defaultIfNull(settings.getSoarLocation(), BLANK_STRING)) ||
                 (manualConfigBtn.isSelected() != settings.isManualConfig()) ||
 
                 !fileConfigYamlFilePath.getText().equals(ObjectUtils.defaultIfNull(settings.getFileConfigYamlFilePath(), BLANK_STRING)) ||

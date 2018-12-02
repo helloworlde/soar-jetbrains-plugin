@@ -23,12 +23,12 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.ui.awt.RelativePoint;
-import com.intellij.ui.components.JBLabel;
 import com.intellij.util.ui.UIUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.Optional;
 
 /**
@@ -99,8 +99,11 @@ public class NotifyUtil {
      */
     public static void showTipsDialog(String title, String content) {
         ApplicationManager.getApplication().invokeLater(() -> {
-            JBLabel label = new JBLabel();
+            JEditorPane label = new JEditorPane();
+            label.setBackground(null);
+            label.setEditable(false);
             label.setText(content);
+            label.setSize(new Dimension(700, 480));
             DialogBuilder dialog = new DialogBuilder();
             dialog.setTitle(title);
             dialog.centerPanel(label);

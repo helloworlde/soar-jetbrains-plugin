@@ -70,6 +70,10 @@ public class Constant {
     public static final String WINDOWS = "windows";
     public static final String LINUX = "linux";
 
+    public static final String SOAR_RELATIVE_PATH = "/.soar/soar";
+    public static final String CONFIG_YAML_RELATIVE_PATH = "/.soar/soar.yaml";
+    public static final String CONFIG_BLACKLIST_RELATIVE_PATH = "/.soar/soar.blacklist";
+
     public static final String SOAR_RELEASE_URL = "https://api.github.com/repos/XiaoMi/Soar/releases";
     public static final String DEFAULT_SOAR_DOWNLOAD_URL = "https://github.com/XiaoMi/soar/releases/download/0.9.0/soar.linux-amd64";
     public static final String ASSETS_KEY = "assets";
@@ -77,7 +81,73 @@ public class Constant {
     public static final String SOAR_PREFIX_KEY = "soar.";
     public static final String AMD_SUFFIX_KEY = "-amd64";
     public static final String BROWSER_DOWNLOAD_URL_KEY = "browser_download_url";
-    public static final String INSTALL_COMMAND_TEMPLATE = "<html><body><div style=\"margin: 10px;\"><div><p>You can reference <label>https://github.com/XiaoMi/Soar</label> for install guidance and get latest version</p><br><p>Or you can execute command like below:</p><br><p><code>wget %s -O %s/.soar/soar</code><br><code>chmod a+x %s/.soar/soar</code></p><br><p>Then input <code>%s/.soar/soar</code> to here</p></div></div></body></html>";
+    public static final String INSTALL_COMMAND_TEMPLATE =
+            "" +
+                    "You can reference https://github.com/XiaoMi/Soar for install guidance or get latest version\n\n" +
+                    "Or you can execute command like below:\n\n" +
+                    "wget %s -O %s/.soar/soar\n" +
+                    "chmod a+x %s/.soar/soar\n\n" +
+                    "The configuration yaml file or blacklist could be found in Soar repository also";
 
-
+    public static final String SOAR_CONFIG_YAML_TEMPLATE =
+            "" +
+                    "# 线上环境配置\n" +
+                    "online-dsn:\n" +
+                    "  addr: 127.0.0.1:3306\n" +
+                    "  schema: online\n" +
+                    "  user: root\n" +
+                    "  password: 123456\n" +
+                    "  disable: false\n" +
+                    "# 测试环境配置\n" +
+                    "test-dsn:\n" +
+                    "  addr: 127.0.0.1:3306\n" +
+                    "  schema: test\n" +
+                    "  user: root\n" +
+                    "  password: 123456\n" +
+                    "  disable: false\n" +
+                    "# 是否允许测试环境与线上环境配置相同\n" +
+                    "allow-online-as-test: true\n" +
+                    "# 是否清理测试时产生的临时文件\n" +
+                    "drop-test-temporary: true\n" +
+                    "# 语法检查小工具\n" +
+                    "only-syntax-check: false\n" +
+                    "sampling-data-factor: 100\n" +
+                    "sampling: true\n" +
+                    "# 日志级别，[0:Emergency, 1:Alert, 2:Critical, 3:Error, 4:Warning, 5:Notice, 6:Informational, 7:Debug]\n" +
+                    "log-level: 7\n" +
+                    "log-output: ./soar.log\n" +
+                    "# 优化建议输出格式\n" +
+                    "report-type: markdown\n" +
+                    "ignore-rules:\n" +
+                    "  - \"\"\n" +
+                    "# 黑名单中的 SQL 将不会给评审意见。一行一条 SQL，可以是正则也可以是指纹，填写指纹时注意问号需要加反斜线转义。\n" +
+                    "blacklist: ./soar.blacklist\n" +
+                    "# 启发式算法相关配置\n" +
+                    "max-join-table-count: 5\n" +
+                    "max-group-by-cols-count: 5\n" +
+                    "max-distinct-count: 5\n" +
+                    "max-index-cols-count: 5\n" +
+                    "max-total-rows: 9999999\n" +
+                    "spaghetti-query-length: 2048\n" +
+                    "allow-drop-index: false\n" +
+                    "# EXPLAIN相关配置\n" +
+                    "explain-sql-report-type: pretty\n" +
+                    "explain-type: extended\n" +
+                    "explain-format: traditional\n" +
+                    "explain-warn-select-type:\n" +
+                    "  - \"\"\n" +
+                    "explain-warn-access-type:\n" +
+                    "  - ALL\n" +
+                    "explain-max-keys: 3\n" +
+                    "explain-min-keys: 0\n" +
+                    "explain-max-rows: 10000\n" +
+                    "explain-warn-extra:\n" +
+                    "  - \"\"\n" +
+                    "explain-max-filtered: 100\n" +
+                    "explain-warn-scalability:\n" +
+                    "  - O(n)\n" +
+                    "query: \"\"\n" +
+                    "list-heuristic-rules: false\n" +
+                    "list-test-sqls: false\n" +
+                    "verbose: true";
 }

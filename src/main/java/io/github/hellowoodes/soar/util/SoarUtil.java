@@ -4,11 +4,15 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.util.io.FileUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -22,6 +26,7 @@ import static io.github.hellowoodes.soar.constant.Constant.*;
  * @author hehuimin
  * @date 2018-11-29 12:44
  */
+@Slf4j
 public class SoarUtil {
 
     /**
@@ -113,7 +118,7 @@ public class SoarUtil {
         String userHome = userHomeFuture.get();
 
         String soarDownloadUrl = getSoarDownloadUrl();
-        content = String.format(content, soarDownloadUrl, userHome, userHome, userHome);
+        content = String.format(content, soarDownloadUrl, userHome, userHome);
 
         return content;
     }
@@ -134,4 +139,26 @@ public class SoarUtil {
                 .map(map -> map.get(osType))
                 .orElse(DEFAULT_SOAR_DOWNLOAD_URL);
     }
+
+    /**
+     * Initial and file configuration file path
+     *
+     * @param component     The file path configuration component
+     * @param relativePath  Configuration file relative path
+     * @param configContent Configuration file content
+     */
+    public static void initialConfigFilePath(TextFieldWithBrowseButton component, String relativePath, String configContent) {
+        try {
+            String userHome = getUserHome();
+            File configFile = new File(userHome.concat(relativePath));
+            if (configContent != null) {
+                FileUtil.createIfDoesntExist(configFile);
+                FileUtil.writeToFile(configFile, configContent);
+            }
+            component.setText(configFile.getAbsolutePath());
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
+    }
+
 }
