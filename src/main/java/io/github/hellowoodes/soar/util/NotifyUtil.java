@@ -22,14 +22,14 @@ import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.ui.UIUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.Optional;
+
+import static io.github.hellowoodes.soar.constant.Constant.DIALOG_SIZE;
 
 /**
  * Notify util
@@ -103,7 +103,7 @@ public class NotifyUtil {
             label.setBackground(null);
             label.setEditable(false);
             label.setText(content);
-            label.setSize(new Dimension(700, 480));
+            label.setSize(DIALOG_SIZE);
             DialogBuilder dialog = new DialogBuilder();
             dialog.setTitle(title);
             dialog.centerPanel(label);
@@ -129,7 +129,7 @@ public class NotifyUtil {
                         .setDialogMode(true)
                         .setHideOnAction(false)
                         .createBalloon()
-                        .show(RelativePoint.getCenterOf(component), Balloon.Position.below);
+                        .show(factory.guessBestPopupLocation(component), Balloon.Position.below);
             });
         }
     }

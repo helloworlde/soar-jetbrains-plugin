@@ -32,7 +32,7 @@ public enum SoarAction {
     /**
      * Analysis action
      */
-    ANALYSIS("Analysis", ReportType.JSON, true),
+    ANALYSIS("Analysis", ReportType.HTML, true),
     /**
      * Format action
      */

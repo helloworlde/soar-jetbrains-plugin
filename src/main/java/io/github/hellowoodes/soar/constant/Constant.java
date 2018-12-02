@@ -17,6 +17,9 @@
 
 package io.github.hellowoodes.soar.constant;
 
+import com.intellij.util.ui.JBDimension;
+import com.intellij.util.ui.JBUI;
+
 /**
  * Soar constant
  *
@@ -29,6 +32,8 @@ public class Constant {
     public static final String EQUAL_LABEL = "=";
     public static final String LINE_BREAK = "\n";
 
+    public static final JBDimension DIALOG_SIZE = JBUI.size(700, 480);
+
     public static final String SOAR_PLUGIN_ID = "io.github.helloworlde.soar";
     public static final String SOAR_DISPLAY_NAME = "Soar";
     public static final String SOAR_HELP_TOPIC = "help.soar.configuration";
@@ -37,9 +42,9 @@ public class Constant {
     public static final String VALIDATE_SQL = "SELECT 1";
     public static final String SUCCESSFUL = "Successful";
     public static final String FAILED = "Failed";
+    public static final String ANALYSIS_RESULT_TITLE = "Analysis Result";
     public static final String NOT_USE_SSL = "?useSSL=false";
     public static final String DEFAULT_TIMEOUT_STRING_VALUE = "30";
-    public static final long DEFAULT_TIMEOUT_LONG_VALUE = 30;
     public static final String DEFAULT_DB_PORT = "3306";
 
     public static final String CONFIG_FILE_LOCATION_KEY = "-config";
@@ -64,6 +69,9 @@ public class Constant {
     public static final String HTML_TAG_PREFIX = "<html>";
     public static final String HTML_TAG_SUFFIX = "</html>";
     public static final String HTML_PARAGRAPH_TEMPLATE = "<p>%s</p>";
+    public static final String SOAR_RESULT_BODY_TAG = "<body onload=load()>";
+    public static final String SOAR_RESULT_BODY_TAG_REGEX = "<body onload=load\\(\\)>";
+
 
     public static final String SYSTEM_PROPERTIES_USER_HOME = "user.home";
     public static final String SYSTEM_PROPERTIES_OS_NAME = "os.name";
@@ -84,16 +92,14 @@ public class Constant {
     public static final String AMD_SUFFIX_KEY = "-amd64";
     public static final String BROWSER_DOWNLOAD_URL_KEY = "browser_download_url";
     public static final String INSTALL_COMMAND_TEMPLATE =
-            "" +
-                    "You can reference https://github.com/XiaoMi/Soar for install guidance or get latest version\n\n" +
+            "You can reference https://github.com/XiaoMi/Soar for install guidance or get latest version\n\n" +
                     "Or you can execute command like below:\n\n" +
                     "wget %s -O %s/.soar/soar\n" +
                     "chmod a+x %s/.soar/soar\n\n" +
                     "The configuration yaml file or blacklist could be found in Soar repository also";
 
     public static final String SOAR_CONFIG_YAML_TEMPLATE =
-            "" +
-                    "# 线上环境配置\n" +
+            "# 线上环境配置\n" +
                     "online-dsn:\n" +
                     "  addr: 127.0.0.1:3306\n" +
                     "  schema: online\n" +

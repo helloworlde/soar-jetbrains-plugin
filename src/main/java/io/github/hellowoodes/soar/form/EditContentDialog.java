@@ -28,7 +28,8 @@ import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.awt.*;
+
+import static io.github.hellowoodes.soar.constant.Constant.DIALOG_SIZE;
 
 /**
  * Edit configuration file content dialog
@@ -63,7 +64,7 @@ public class EditContentDialog {
 
         JComponent component = editor.getComponent();
         component.setEnabled(true);
-        component.setPreferredSize(new Dimension(640, 480));
+        component.setPreferredSize(DIALOG_SIZE);
         component.setAutoscrolls(true);
 
         JComponent contentComponent = editor.getContentComponent();

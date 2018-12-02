@@ -66,7 +66,7 @@ public class FormatAction extends AnAction {
                     progressIndicator.setText("Soar: Validating SQL");
                     DatabaseUtil.validateSQL(selectedText);
 
-                    progressIndicator.setText("Soar: Splicing execute command");
+                    progressIndicator.setText("Soar: Splicing command parameters");
                     List<String> commandList = CommandUtil.getCommandList(selectedText, SoarAction.FORMAT);
 
                     progressIndicator.setText("Soar: Executing format SQL command");
@@ -79,8 +79,7 @@ public class FormatAction extends AnAction {
 
                     progressIndicator.setText("Soar: Format SQL completed");
                 } catch (Exception e) {
-                    log.error(e.getMessage(), e);
-                    NotifyUtil.showErrorMessageDialog("Invalid SQL content", NotifyUtil.getExceptionMessage(e));
+                    NotifyUtil.showErrorMessageDialog("Execute action failed", NotifyUtil.getExceptionMessage(e));
                 }
             }
         });

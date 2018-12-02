@@ -161,4 +161,17 @@ public class SoarUtil {
         }
     }
 
+    /**
+     * Trim not necessary content of Soar analysis result
+     *
+     * @param originResultContent The Soar analysis result
+     * @return The content only have needed tag
+     */
+    public static String trimResultUselessContent(String originResultContent) {
+        String result = "";
+        if (originResultContent.contains(SOAR_RESULT_BODY_TAG)) {
+            result = originResultContent.split(SOAR_RESULT_BODY_TAG_REGEX)[1];
+        }
+        return result;
+    }
 }
