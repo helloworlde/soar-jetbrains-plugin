@@ -151,7 +151,7 @@ public class SoarUtil {
         try {
             String userHome = getUserHome();
             File configFile = new File(userHome.concat(relativePath));
-            if (configContent != null) {
+            if (configContent != null && !FileUtil.exists(configFile.getAbsolutePath())) {
                 FileUtil.createIfDoesntExist(configFile);
                 FileUtil.writeToFile(configFile, configContent);
             }
