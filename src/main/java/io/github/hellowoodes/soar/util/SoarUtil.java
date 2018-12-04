@@ -171,6 +171,8 @@ public class SoarUtil {
         String result = "";
         if (originResultContent.contains(SOAR_RESULT_BODY_TAG)) {
             result = originResultContent.split(SOAR_RESULT_BODY_TAG_REGEX)[1];
+            result = result.replaceAll("☠", BLANK_STRING)
+                    .replaceAll("️", BLANK_STRING);
         }
         return result;
     }

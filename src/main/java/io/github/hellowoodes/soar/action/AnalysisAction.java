@@ -66,7 +66,7 @@ public class AnalysisAction extends AnAction {
                         return SoarUtil.trimResultUselessContent(originHtmlResult);
                     } catch (Exception e) {
                         return "Analysis failed, error message is " + NotifyUtil.getExceptionMessage(e) +
-                                "Please check your SQL or configuration!";
+                                " Please check your configuration under setting -> soar!";
                     }
                 });
 

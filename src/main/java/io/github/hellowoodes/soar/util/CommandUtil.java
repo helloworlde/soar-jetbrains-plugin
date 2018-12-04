@@ -18,9 +18,6 @@
 package io.github.hellowoodes.soar.util;
 
 import io.github.hellowoodes.soar.config.SoarSettings;
-import io.github.hellowoodes.soar.constant.ExplainFormat;
-import io.github.hellowoodes.soar.constant.ExplainSQLReportType;
-import io.github.hellowoodes.soar.constant.ExplainType;
 import io.github.hellowoodes.soar.constant.SoarAction;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -155,10 +152,6 @@ public class CommandUtil {
      */
     private static void getManualConfig(SoarSettings settings, List<String> commandList) {
         // Manual Config
-        addCommandIfValid(commandList, EXPLAIN_TYPE_KEY, ExplainType.TRADITIONAL.getType());
-        addCommandIfValid(commandList, EXPLAIN_FORMAT_KEY, ExplainFormat.JSON.getType());
-        addCommandIfValid(commandList, EXPLAIN_SQL_REPORT_TYPE_KEY, ExplainSQLReportType.SAMPLE.getType());
-
         addCommandIfValid(commandList, ONLINE_DSN_KEY, settings.getOnlineDSN());
         addCommandIfValid(commandList, TEST_DSN_KEY, settings.getTestDSN());
 
