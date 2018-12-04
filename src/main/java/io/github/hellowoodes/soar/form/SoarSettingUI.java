@@ -211,6 +211,7 @@ public class SoarSettingUI extends JFrame {
                             ApplicationManager.getApplication().executeOnPooledThread(() -> SoarUtil.initialConfigFilePath(fileConfigYamlFilePath, CONFIG_YAML_RELATIVE_PATH, SOAR_CONFIG_YAML_TEMPLATE));
                             ApplicationManager.getApplication().executeOnPooledThread(() -> SoarUtil.initialConfigFilePath(fileConfigBlackListLFilePath, CONFIG_BLACKLIST_RELATIVE_PATH, BLANK_STRING));
                             ApplicationManager.getApplication().executeOnPooledThread(() -> SoarUtil.initialConfigFilePath(soarLocationPath, SOAR_RELATIVE_PATH, null));
+                            soarCheckBtn.setText(CHECK);
                         } catch (Exception e1) {
                             String errorMessage = NotifyUtil.getExceptionMessage(e1);
                             NotifyUtil.showErrorMessageDialog("Soar check failed", errorMessage);
@@ -361,7 +362,9 @@ public class SoarSettingUI extends JFrame {
      */
     private void loadSettings(SoarSettings settings) {
         // Soar location config
-        soarLocationPath.setText(settings.getSoarLocation());
+        String soarLocation = settings.getSoarLocation();
+        soarLocationPath.setText(soarLocation);
+        soarCheckBtn.setText(StringUtils.isBlank(soarLocation) ? INIT : CHECK);
 
         // Which type config
         manualConfigBtn.setSelected(settings.isManualConfig());

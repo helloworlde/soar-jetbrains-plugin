@@ -32,6 +32,9 @@ public class Constant {
     public static final String EQUAL_LABEL = "=";
     public static final String LINE_BREAK = "\n";
 
+    public static final String INIT = "Init";
+    public static final String CHECK = "Check";
+
     public static final JBDimension DIALOG_SIZE = JBUI.size(700, 480);
 
     public static final String SOAR_PLUGIN_ID = "io.github.helloworlde.soar";
@@ -93,10 +96,10 @@ public class Constant {
     public static final String BROWSER_DOWNLOAD_URL_KEY = "browser_download_url";
     public static final String INSTALL_COMMAND_TEMPLATE =
             "You can reference https://github.com/XiaoMi/Soar for install guidance or get latest version\n\n" +
-                    "Or you can execute command like below:\n\n" +
+                    "Or you can execute command like below directly if Go environment is configured:\n\n" +
                     "wget %s -O %s/.soar/soar\n" +
                     "chmod a+x %s/.soar/soar\n\n" +
-                    "The configuration yaml file or blacklist could be found in Soar repository also";
+                    "The configuration yaml file and blacklist could be found in Soar repository also";
 
     public static final String SOAR_CONFIG_YAML_TEMPLATE =
             "# 线上环境配置\n" +

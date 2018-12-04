@@ -24,6 +24,7 @@ import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 import java.awt.*;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -65,8 +66,7 @@ public class AnalysisAction extends AnAction {
                         progressIndicator.setText("Soar: Parse result content");
                         return SoarUtil.trimResultUselessContent(originHtmlResult);
                     } catch (Exception e) {
-                        return "Analysis failed, error message is " + NotifyUtil.getExceptionMessage(e) +
-                                " Please check your configuration under setting -> soar!";
+                        return null;
                     }
                 });
 
@@ -79,26 +79,31 @@ public class AnalysisAction extends AnAction {
                 messagePane.setEditable(false);
 
                 try {
-                    messagePane.setText(result.get());
-                } catch (InterruptedException | ExecutionException e) {
-                    messagePane.setText("Get result failed, error message is : " + NotifyUtil.getExceptionMessage(e));
+                    String resultContent = Optional.of(result.get()).orElseThrow(IllegalArgumentException::new);
+
+                    messagePane.setText(resultContent);
+
+                    JScrollPane scrollPane = ScrollPaneFactory.createScrollPane(messagePane,
+                            ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+                            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+                    scrollPane.setPreferredSize(DIALOG_SIZE);
+                    panel.add(scrollPane, BorderLayout.CENTER);
+
+                    ApplicationManager.getApplication().invokeLater(() -> {
+                        // Result Dialog
+                        DialogBuilder dialog = new DialogBuilder();
+                        dialog.setTitle(ANALYSIS_RESULT_TITLE);
+                        dialog.centerPanel(panel);
+                        dialog.addOkAction();
+                        dialog.show();
+                    });
+                    progressIndicator.setText("Soar: Analysis completed");
+                } catch (ExecutionException | InterruptedException e) {
+                    e.printStackTrace();
+                    NotifyUtil.showErrorMessageDialog("Analysis failed", "Get result failed, error message is : " + NotifyUtil.getExceptionMessage(e));
+                } catch (Exception e) {
+                    NotifyUtil.showErrorMessageDialog("Soar is not installed correctly", "Please configure Soar in Setting -> Soar");
                 }
-
-                JScrollPane scrollPane = ScrollPaneFactory.createScrollPane(messagePane,
-                        ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-                        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-                scrollPane.setPreferredSize(DIALOG_SIZE);
-                panel.add(scrollPane, BorderLayout.CENTER);
-
-                ApplicationManager.getApplication().invokeLater(() -> {
-                    // Result Dialog
-                    DialogBuilder dialog = new DialogBuilder();
-                    dialog.setTitle(ANALYSIS_RESULT_TITLE);
-                    dialog.centerPanel(panel);
-                    dialog.addOkAction();
-                    dialog.show();
-                });
-                progressIndicator.setText("Soar: Analysis completed");
             }
         });
     }
