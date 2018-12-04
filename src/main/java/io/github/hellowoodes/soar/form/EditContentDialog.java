@@ -24,10 +24,15 @@ import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogBuilder;
+import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.io.FileUtil;
+import io.github.hellowoodes.soar.util.NotifyUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.io.File;
+import java.io.IOException;
 
 import static io.github.hellowoodes.soar.constant.Constant.DIALOG_SIZE;
 
@@ -36,6 +41,7 @@ import static io.github.hellowoodes.soar.constant.Constant.DIALOG_SIZE;
  *
  * @author HelloWoodes
  */
+@Slf4j
 public class EditContentDialog {
     private final Project project;
 
@@ -69,10 +75,19 @@ public class EditContentDialog {
 
         JComponent contentComponent = editor.getContentComponent();
 
-        DialogBuilder dialog = new DialogBuilder(project);
-        dialog.setTitle(path);
-        dialog.centerPanel(component).setPreferredFocusComponent(contentComponent);
-        dialog.addOkAction();
-        dialog.show();
+        DialogBuilder builder = new DialogBuilder(project);
+        builder.setTitle(path);
+        builder.centerPanel(component).setPreferredFocusComponent(contentComponent);
+        builder.addOkAction();
+        builder.setOkOperation(() -> {
+            try {
+                FileUtil.writeToFile(new File(path), document.getText());
+                builder.getDialogWrapper().close(DialogWrapper.OK_EXIT_CODE);
+            } catch (IOException e) {
+                builder.setErrorText(NotifyUtil.getExceptionMessage(e));
+            }
+        });
+        builder.addCancelAction();
+        builder.show();
     }
 }
