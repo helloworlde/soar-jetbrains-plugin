@@ -29,9 +29,15 @@ dependencies {
 intellij {
     version '2018.2.4'
     pluginName 'Soar'
+    updateSinceUntilBuild false
+    plugins = ['coverage', 'yaml']
 }
 patchPluginXml {
     changeNotes """
-      Add change notes here.<br>
-      <em>most HTML tags may be used</em>"""
+      <h3>Version 1.0</h3>
+      <ul>
+          <li>SQL analysis</li>
+          <li>SQL format</li>
+      </ul>
+      """
 }

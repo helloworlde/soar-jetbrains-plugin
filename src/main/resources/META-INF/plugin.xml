@@ -17,20 +17,16 @@
 
 <idea-plugin>
     <id>io.github.helloworlde.soar</id>
-    <name>Soar</name>
+    <name>Soar SQL Analysis</name>
     <version>1.0</version>
-    <vendor email="hellowoodes@outlook.com" url="https://github.com/helloworlde/SoarPlugin">HelloWoodes</vendor>
+    <vendor email="hellowoodes@outlook.com" url="https://github.com/helloworlde">HelloWoodes</vendor>
 
     <description><![CDATA[
-    Plugin for <a href="https://github.com/XiaoMi/soar">Soar</a>
+    Soar is plugin of <a href="https://github.com/XiaoMi/soar">Soar</a> which is for analysis SQL performance and optimize
     Please reference <a href="https://github.com/XiaoMi/soar">https://github.com/XiaoMi/soar</a> for usage and configuration
     ]]></description>
 
-    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
-         on how to target different products -->
-    <!-- uncomment to enable plugin in all products
     <depends>com.intellij.modules.lang</depends>
-    -->
 
     <extensions defaultExtensionNs="com.intellij">
         <applicationService serviceInterface="io.github.hellowoodes.soar.config.SoarSettings"

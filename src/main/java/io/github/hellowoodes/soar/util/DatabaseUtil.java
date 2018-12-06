@@ -122,10 +122,6 @@ public class DatabaseUtil {
         if (StringUtils.isBlank(user.getText())) {
             throw new IllegalArgumentException("Please input username of Database");
         }
-
-        if (StringUtils.isBlank(new String(password.getPassword()))) {
-            throw new IllegalArgumentException("Please input password of Database");
-        }
     }
 
     /**
