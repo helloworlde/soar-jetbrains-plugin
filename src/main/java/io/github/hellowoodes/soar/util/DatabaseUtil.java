@@ -104,13 +104,12 @@ public class DatabaseUtil {
     /**
      * Check Database configuration param if valid
      *
-     * @param host     Database host component
-     * @param port     Database port component
-     * @param user     Database user component
-     * @param password Database password component
+     * @param host Database host component
+     * @param port Database port component
+     * @param user Database user component
      * @throws IllegalArgumentException If configuration is not valid, will throw IllegalArgumentException
      */
-    public static void validateParam(JTextField host, JTextField port, JTextField user, JPasswordField password) throws IllegalArgumentException {
+    public static void validateParam(JTextField host, JTextField port, JTextField user) throws IllegalArgumentException {
         if (StringUtils.isBlank(host.getText())) {
             throw new IllegalArgumentException("Please input valid Database host, It should be IP address or domain");
         }

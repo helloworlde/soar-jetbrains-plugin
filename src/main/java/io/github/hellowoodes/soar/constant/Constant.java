@@ -34,6 +34,8 @@ public class Constant {
 
     public static final String INIT = "Init";
     public static final String CHECK = "Check";
+    public static final String NOT_SUPPORT_CHARACTER = "!@#$%^&*()_+=-~\\][{}\"\':/;<>?.,`";
+    public static final String LOCALHOST = "localhost";
 
     public static final JBDimension DIALOG_SIZE = JBUI.size(700, 480);
 
@@ -96,7 +98,7 @@ public class Constant {
     public static final String BROWSER_DOWNLOAD_URL_KEY = "browser_download_url";
     public static final String INSTALL_COMMAND_TEMPLATE =
             "You can reference https://github.com/XiaoMi/Soar for install guidance or get latest version\n\n" +
-                    "Or you can execute command like below directly if Go environment is configured:\n\n" +
+                    "Or you can execute command like below directly if Go environment was configured:\n\n" +
                     "wget %s -O %s/.soar/soar\n" +
                     "chmod a+x %s/.soar/soar\n\n" +
                     "The configuration yaml file and blacklist could be found in Soar repository also";

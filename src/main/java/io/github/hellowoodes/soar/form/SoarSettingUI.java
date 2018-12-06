@@ -281,16 +281,37 @@ public class SoarSettingUI extends JFrame {
             }
         };
 
-        host.getDocument().addDocumentListener(documentAdapter);
+        DocumentAdapter hostDocumentAdapter = new DocumentAdapter() {
+            @Override
+            protected void textChanged(@NotNull DocumentEvent documentEvent) {
+                modifyDBUrl(host, port, database, url, resultLabel);
+                String hostContent = host.getText();
+                if (LOCALHOST.equals(hostContent)) {
+                    NotifyUtil.showNotifyPopup(host, "The host \"localhost\" is not support, please replace as \"127.0.0.1\"");
+                }
+            }
+        };
+
+        DocumentAdapter passwordDocumentAdapter = new DocumentAdapter() {
+            @Override
+            protected void textChanged(@NotNull DocumentEvent documentEvent) {
+                String passwordContent = new String(password.getPassword());
+                if (StringUtils.containsAny(NOT_SUPPORT_CHARACTER, passwordContent)) {
+                    NotifyUtil.showNotifyPopup(password, "Your password have special symbol, please use file config, or explain will not be used in analysis");
+                }
+            }
+        };
+
+        host.getDocument().addDocumentListener(hostDocumentAdapter);
         port.getDocument().addDocumentListener(documentAdapter);
         database.getDocument().addDocumentListener(documentAdapter);
         user.getDocument().addDocumentListener(documentAdapter);
-        password.getDocument().addDocumentListener(documentAdapter);
+        password.getDocument().addDocumentListener(passwordDocumentAdapter);
 
         button.addActionListener(event -> {
             try {
                 hideResultLabel(resultLabel);
-                DatabaseUtil.validateParam(host, port, user, password);
+                DatabaseUtil.validateParam(host, port, user);
                 boolean connectionSuccess = DatabaseUtil.validateConnection(url.getText(), user.getText(), new String(password.getPassword()));
                 if (connectionSuccess) {
                     modifyResultLabel(resultLabel, true, true, SUCCESSFUL, null);

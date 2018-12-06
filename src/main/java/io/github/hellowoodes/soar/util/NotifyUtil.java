@@ -19,10 +19,10 @@ package io.github.hellowoodes.soar.util;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.ui.DialogBuilder;
+import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.util.ui.UIUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -122,8 +122,7 @@ public class NotifyUtil {
         if (StringUtils.isNoneBlank(messageContent)) {
             ApplicationManager.getApplication().invokeLater(() -> {
                 JBPopupFactory factory = JBPopupFactory.getInstance();
-                factory.createHtmlTextBalloonBuilder(messageContent, null, UIUtil.getWindowColor(), null)
-                        .setBorderColor(UIUtil.getWindowColor())
+                factory.createHtmlTextBalloonBuilder(messageContent, null, MessageType.WARNING.getPopupBackground(), null)
                         .setShadow(true)
                         .setFadeoutTime(5000)
                         .setDialogMode(true)
