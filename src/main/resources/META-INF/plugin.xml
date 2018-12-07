@@ -40,11 +40,11 @@
             <separator/>
             <action id="SoarSQLAnalysis" class="io.github.hellowoodes.soar.action.AnalysisAction" text="Analysis SQL"
                     description="Analysis Selected SQL">
-                <keyboard-shortcut keymap="$default" first-keystroke="shift alt M"/>
+                <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl H"/>
             </action>
             <action id="SoarSQLFormat" class="io.github.hellowoodes.soar.action.FormatAction" text="Format SQL"
                     description="Format Selected SQL">
-                <keyboard-shortcut keymap="$default" first-keystroke="shift alt L"/>
+                <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl J"/>
             </action>
 
             <add-to-group group-id="EditorPopupMenu" relative-to-action="EditorPopupMenu1" anchor="before"/>
