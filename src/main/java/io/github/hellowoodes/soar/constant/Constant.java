@@ -97,6 +97,7 @@ public class Constant {
     public static final String SOAR_PREFIX_KEY = "soar.";
     public static final String AMD_SUFFIX_KEY = "-amd64";
     public static final String BROWSER_DOWNLOAD_URL_KEY = "browser_download_url";
+    public static final String COMMON_ERROR_MESSAGE = "Please check selected content doesn't have syntax error and Soar configuration is correct";
     public static final String INSTALL_COMMAND_TEMPLATE =
             "You can reference https://github.com/XiaoMi/Soar for install guidance or get latest version\n\n" +
                     "Or you can execute command like below directly if Go environment was configured:\n\n" +

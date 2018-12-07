@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.util.Optional;
 
+import static io.github.hellowoodes.soar.constant.Constant.COMMON_ERROR_MESSAGE;
 import static io.github.hellowoodes.soar.constant.Constant.DIALOG_SIZE;
 
 /**
@@ -86,9 +87,12 @@ public class NotifyUtil {
      */
     public static String getExceptionMessage(Exception ex) {
         Optional<Exception> optionalException = Optional.of(ex);
-        return optionalException.map(cause -> ex.getCause())
+        String errorMessage = optionalException.map(cause -> ex.getCause())
                 .map(Throwable::getMessage)
                 .orElse(ex.getMessage());
+
+        return Optional.ofNullable(errorMessage)
+                .orElse(COMMON_ERROR_MESSAGE);
     }
 
     /**

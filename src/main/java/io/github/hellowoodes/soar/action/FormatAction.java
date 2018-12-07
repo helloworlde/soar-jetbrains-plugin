@@ -52,41 +52,45 @@ public class FormatAction extends AnAction {
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent event) {
-        final Project project = event.getProject();
-        final Editor editor = event.getRequiredData(CommonDataKeys.EDITOR);
-        final Document document = editor.getDocument();
-        final SelectionModel selectionModel = editor.getSelectionModel();
-        final int start = selectionModel.getSelectionStart();
-        final int end = selectionModel.getSelectionEnd();
+        try {
+            final Project project = event.getProject();
+            final Editor editor = event.getRequiredData(CommonDataKeys.EDITOR);
+            final Document document = editor.getDocument();
+            final SelectionModel selectionModel = editor.getSelectionModel();
+            final int start = selectionModel.getSelectionStart();
+            final int end = selectionModel.getSelectionEnd();
 
-        String selectedText = selectionModel.getSelectedText();
+            String selectedText = selectionModel.getSelectedText();
 
-        ProgressManager.getInstance().run(new Task.Backgroundable(event.getProject(), "Executing Format SQL") {
-            @Override
-            public void run(@NotNull ProgressIndicator progressIndicator) {
-                try {
-                    progressIndicator.setText("Soar: Start parse SQL");
+            ProgressManager.getInstance().run(new Task.Backgroundable(event.getProject(), "Executing Format SQL") {
+                @Override
+                public void run(@NotNull ProgressIndicator progressIndicator) {
+                    try {
+                        progressIndicator.setText("Soar: Start parse SQL");
 
-                    progressIndicator.setText("Soar: Validating SQL");
-                    DatabaseUtil.validateSQL(selectedText);
+                        progressIndicator.setText("Soar: Validating SQL");
+                        DatabaseUtil.validateSQL(selectedText);
 
-                    progressIndicator.setText("Soar: Splicing command parameters");
-                    List<String> commandList = CommandUtil.getCommandList(selectedText, SoarAction.FORMAT);
+                        progressIndicator.setText("Soar: Splicing command parameters");
+                        List<String> commandList = CommandUtil.getCommandList(selectedText, SoarAction.FORMAT);
 
-                    progressIndicator.setText("Soar: Executing format SQL command");
-                    String result = StringUtils.trim(CommandUtil.executeCommand(commandList)).replaceAll(DOUBLE_LINE_BREAK, LINE_BREAK);
+                        progressIndicator.setText("Soar: Executing format SQL command");
+                        String result = StringUtils.trim(CommandUtil.executeCommand(commandList)).replaceAll(DOUBLE_LINE_BREAK, LINE_BREAK);
 
-                    progressIndicator.setText("Soar: Replace selected sql as formatted");
-                    WriteCommandAction.runWriteCommandAction(project, () ->
-                            document.replaceString(start, end, result)
-                    );
+                        progressIndicator.setText("Soar: Replace selected sql as formatted");
+                        WriteCommandAction.runWriteCommandAction(project, () ->
+                                document.replaceString(start, end, result)
+                        );
 
-                    progressIndicator.setText("Soar: Format SQL completed");
-                } catch (Exception e) {
-                    NotifyUtil.showErrorMessageDialog("Execute action failed", NotifyUtil.getExceptionMessage(e));
+                        progressIndicator.setText("Soar: Format SQL completed");
+                    } catch (Exception e) {
+                        NotifyUtil.showErrorMessageDialog("Execute action failed", NotifyUtil.getExceptionMessage(e));
+                    }
                 }
-            }
-        });
+            });
+        } catch (Exception e) {
+            NotifyUtil.showErrorMessageDialog("Execute action failed", NotifyUtil.getExceptionMessage(e));
+        }
     }
 }
 
