@@ -33,9 +33,13 @@ import io.github.hellowoodes.soar.util.CommandUtil;
 import io.github.hellowoodes.soar.util.DatabaseUtil;
 import io.github.hellowoodes.soar.util.NotifyUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+
+import static io.github.hellowoodes.soar.constant.Constant.DOUBLE_LINE_BREAK;
+import static io.github.hellowoodes.soar.constant.Constant.LINE_BREAK;
 
 /**
  * Soar format action
@@ -70,7 +74,7 @@ public class FormatAction extends AnAction {
                     List<String> commandList = CommandUtil.getCommandList(selectedText, SoarAction.FORMAT);
 
                     progressIndicator.setText("Soar: Executing format SQL command");
-                    String result = CommandUtil.executeCommand(commandList);
+                    String result = StringUtils.trim(CommandUtil.executeCommand(commandList)).replaceAll(DOUBLE_LINE_BREAK, LINE_BREAK);
 
                     progressIndicator.setText("Soar: Replace selected sql as formatted");
                     WriteCommandAction.runWriteCommandAction(project, () ->

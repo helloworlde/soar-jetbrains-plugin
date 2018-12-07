@@ -31,6 +31,7 @@ public class Constant {
     public static final String BLANK_STRING = "";
     public static final String EQUAL_LABEL = "=";
     public static final String LINE_BREAK = "\n";
+    public static final String DOUBLE_LINE_BREAK = "\n \n";
 
     public static final String INIT = "Init";
     public static final String CHECK = "Check";
