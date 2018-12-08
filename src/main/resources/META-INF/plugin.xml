@@ -17,13 +17,18 @@
 
 <idea-plugin>
     <id>io.github.helloworlde.soar</id>
-    <name>Soar SQL Analysis</name>
+    <name>SOAR</name>
     <version>1.0</version>
     <vendor email="hellowoodes@outlook.com" url="https://github.com/helloworlde">HelloWoodes</vendor>
 
     <description><![CDATA[
-    Soar is plugin of <a href="https://github.com/XiaoMi/soar">Soar</a> which is for analysis SQL performance and optimize
-    Please reference <a href="https://github.com/XiaoMi/soar">https://github.com/XiaoMi/soar</a> for usage and configuration
+    <p>
+        SOAR(SQL optimizer And Rewrite) is plugin of <a href="https://github.com/XiaoMi/soar">SOAR</a> which for analysis SQL performance and optimize.
+    </p>
+    <br/>
+    <p>
+        You can get help of configuration or report issue <a href="https://github.com/helloworlde/soar-jetbrains-plugin">here</a>
+    </p>
     ]]></description>
 
     <depends>com.intellij.modules.lang</depends>

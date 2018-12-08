@@ -24,10 +24,12 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.ui.Colors;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBPanel;
+import com.intellij.util.ui.UIUtil;
 import io.github.hellowoodes.soar.config.SoarSettings;
 import io.github.hellowoodes.soar.util.CommandUtil;
 import io.github.hellowoodes.soar.util.DatabaseUtil;
@@ -41,6 +43,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
+import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -244,7 +247,8 @@ public class SoarSettingUI extends JFrame {
         resultLabel.setVisible(isShow);
         resultLabel.setText(isShow ? content : null);
         resultLabel.setToolTipText(isShow ? detailMessage : null);
-        resultLabel.setForeground(isSuccess ? JBColor.GREEN : JBColor.RED);
+        Color green = UIUtil.isUnderDarcula() ? JBColor.GREEN : Colors.DARK_GREEN;
+        resultLabel.setForeground(isSuccess ? green : JBColor.RED);
     }
 
     /**
