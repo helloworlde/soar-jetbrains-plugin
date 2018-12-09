@@ -1,15 +1,15 @@
 buildscript {
     repositories {
-        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
         mavenCentral()
     }
 }
 plugins {
-    id 'org.jetbrains.intellij' version '0.3.12'
+    id "org.jetbrains.intellij" version "0.3.12"
 }
-
-group 'io.github.helloworlde'
-version '1.0-SNAPSHOT'
+ 
+group "io.github.helloworlde"
+version "${soarVersion}"
 
 repositories {
     maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
@@ -27,14 +27,22 @@ dependencies {
 }
 
 intellij {
-    version '2018.2.4'
-    pluginName 'Soar'
-    updateSinceUntilBuild false
-    plugins = ['coverage', 'yaml']
+    version "${intellijVersion}"
+    pluginName "Soar"
+    updateSinceUntilBuild true
+    plugins = ["yaml"]
 }
+
+publishPlugin {
+    username "${intellijPublishUsername}"
+    password "${intellijPublishPassword}"
+    channels "${intellijPublishChannels}"
+}
+
 patchPluginXml {
+    sinceBuild "${intellijSinceBuild}"
     changeNotes """
-      <h3>Version 1.0</h3>
+      1.0.0
       <ul>
           <li>SQL analysis</li>
           <li>SQL format</li>
