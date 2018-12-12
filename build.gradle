@@ -29,7 +29,7 @@ dependencies {
 intellij {
     version "${intellijVersion}"
     pluginName "Soar"
-    updateSinceUntilBuild true
+    updateSinceUntilBuild false
     plugins = ["yaml"]
 }
 
