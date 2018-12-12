@@ -19,7 +19,7 @@
 ## 安装
 
 ### 本地文件安装
-1. 从下载最新的 [SOAR]((https://plugins.jetbrains.com/plugin/11417-soar)) 插件压缩包
+1. 从下载最新的 [SOAR](https://plugins.jetbrains.com/plugin/11417-soar) 插件压缩包
 2. 打开 IDE，Settings -> Plugins -> 设置按钮 -> Install Plugin From Disk 
 ![Install SOAR](img/SOAR%20Install%20localfile.png)
 3. 选择 SOAR 插件压缩包的位置
