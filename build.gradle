@@ -42,6 +42,16 @@ publishPlugin {
 patchPluginXml {
     sinceBuild "${intellijSinceBuild}"
     changeNotes """
+      1.0.2
+      <ul>
+        <li>Fixed issue <a href='https://github.com/helloworlde/soar-jetbrains-plugin/issues/9'>#9</a> of no response in windows platform</li>
+        <li>Fixed issue encode of chinese in windows platform</li>
+        <li>Add usage description in plugin introduce</li>
+      </ul>
+      1.0.1
+      <ul>
+        <li>Modify IDE version limit</li>
+      </ul>
       1.0.0
       <ul>
           <li>SQL analysis</li>
