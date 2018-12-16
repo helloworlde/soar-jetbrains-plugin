@@ -47,6 +47,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -533,7 +534,7 @@ public class SoarSettingUI extends JFrame {
      */
     private void showEditFileDialog(String path) {
         try {
-            String content = FileUtil.loadFile(new File(path));
+            String content = FileUtil.loadFile(new File(path), StandardCharsets.UTF_8);
             EditContentDialog editContentDialog = new EditContentDialog(null);
             editContentDialog.showContentDialog(path, content);
         } catch (IOException e) {
