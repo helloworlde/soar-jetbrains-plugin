@@ -17,6 +17,7 @@ import io.github.hellowoodes.soar.constant.SoarAction;
 import io.github.hellowoodes.soar.util.CommandUtil;
 import io.github.hellowoodes.soar.util.NotifyUtil;
 import io.github.hellowoodes.soar.util.SoarUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -36,6 +37,7 @@ import static io.github.hellowoodes.soar.constant.Constant.*;
  * @author HelloWoodes
  * @date 2018/11/4 23:12
  */
+@Slf4j
 public class AnalysisAction extends AnAction {
 
     @Override
@@ -49,13 +51,16 @@ public class AnalysisAction extends AnAction {
             event.getPresentation().setEnabledAndVisible(true);
             final Editor editor = event.getRequiredData(CommonDataKeys.EDITOR);
             String selectedText = editor.getSelectionModel().getSelectedText();
-
+            log.info(selectedText);
             ProgressManager.getInstance().run(new Task.Backgroundable(event.getProject(), "Analysis SQL") {
                 @Override
                 public void run(@NotNull ProgressIndicator progressIndicator) {
                     progressIndicator.setText("Soar: Analysis SQL");
+                    log.info("Soar: Analysis SQL");
 
                     progressIndicator.setText("Soar: Splicing command parameters");
+                    log.info("Soar: Splicing command parameters");
+
                     List<String> commandList = CommandUtil.getCommandList(selectedText, SoarAction.ANALYSIS);
 
                     Future<String> result = ApplicationManager.getApplication().executeOnPooledThread(() -> {
@@ -66,6 +71,7 @@ public class AnalysisAction extends AnAction {
                             progressIndicator.setText("Soar: Parse result content");
                             return SoarUtil.trimResultUselessContent(originHtmlResult);
                         } catch (Exception e) {
+                            log.info(e.getMessage(), e);
                             return null;
                         }
                     });
@@ -99,9 +105,12 @@ public class AnalysisAction extends AnAction {
                         });
                         progressIndicator.setText("Soar: Analysis completed");
                     } catch (ExecutionException | InterruptedException e) {
+                        log.info(e.getMessage(), e);
                         e.printStackTrace();
                         NotifyUtil.showErrorMessageDialog("Analysis failed", "Get result failed, error message is : " + NotifyUtil.getExceptionMessage(e));
                     } catch (Exception e) {
+                        log.info(e.getMessage(), e);
+
                         NotifyUtil.showErrorMessageDialog("Soar is not installed correctly", "Please configure Soar in Setting -> Soar");
                     }
                 }

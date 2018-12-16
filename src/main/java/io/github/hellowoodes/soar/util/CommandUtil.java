@@ -17,6 +17,7 @@
 
 package io.github.hellowoodes.soar.util;
 
+import com.intellij.openapi.application.ApplicationManager;
 import io.github.hellowoodes.soar.config.SoarSettings;
 import io.github.hellowoodes.soar.constant.SoarAction;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Future;
 
 import static io.github.hellowoodes.soar.constant.Constant.*;
 
@@ -50,25 +52,43 @@ public class CommandUtil {
      * @throws Exception Throw exception when failed
      */
     public static String executeCommand(List<String> commandList) throws Exception {
+        log.info("CommandList: {} ", commandList);
         String[] command = commandList.toArray(new String[0]);
-        StringBuilder result = new StringBuilder();
 
         Process process = Runtime.getRuntime().exec(command);
-        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
-             BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream(), StandardCharsets.UTF_8))) {
-            process.waitFor();
 
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                result.append(line).append(LINE_BREAK);
+        Future<String> successFuture = ApplicationManager.getApplication().executeOnPooledThread(() -> {
+            StringBuilder resultContent = new StringBuilder();
+            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
+                String line;
+                while ((line = bufferedReader.readLine()) != null) {
+                    resultContent.append(line).append(LINE_BREAK);
+                }
             }
-            while ((line = errorReader.readLine()) != null) {
-                result.append(line).append(LINE_BREAK);
-            }
-        }
+            log.info("Success content: {}", resultContent);
+            return resultContent.toString();
+        });
 
+        Future<String> errorFuture = ApplicationManager.getApplication().executeOnPooledThread(() -> {
+            StringBuilder resultContent = new StringBuilder();
+            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getErrorStream(), StandardCharsets.UTF_8))) {
+                String line;
+                while ((line = bufferedReader.readLine()) != null) {
+                    resultContent.append(line).append(LINE_BREAK);
+                }
+            }
+            log.info("Error content: {}", resultContent);
+            return resultContent.toString();
+        });
+
+        process.waitFor();
+        log.info("Precess waitFor");
         process.destroy();
-        return result.toString();
+        log.info("Precess destroy");
+
+        String result = Optional.ofNullable(successFuture.get()).orElse(errorFuture.get());
+        log.info("Result: {}", result);
+        return result;
     }
 
     /**
