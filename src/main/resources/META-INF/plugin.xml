@@ -1,0 +1,96 @@
+<!--
+  ~ Copyright 2018 HelloWoodes
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  ~
+  -->
+
+<idea-plugin>
+    <id>io.github.helloworlde.soar</id>
+    <name>SOAR</name>
+    <version>1.0</version>
+    <vendor email="hellowoodes@outlook.com" url="https://github.com/helloworlde">HelloWoodes</vendor>
+
+    <description><![CDATA[
+        <p>
+            SOAR(SQL optimizer And Rewrite) is plugin of <a href="https://github.com/XiaoMi/soar">SOAR</a> which for
+            analysis SQL performance and optimize.
+        </p>
+        <br/>
+        <h3>How to use it</h3>
+        <p>
+        <ol>
+            <li>SOAR dependent GO environment, so you need install and configure Go environment first</li>
+            <li>Open settings and find SOAR configuration panel, click Init button</li>
+            <li>Execute download and modify permission command like content in dialog</li>
+            <li>After executed the command, input SOAR location and click check button to verify SOAR is installed
+                correctly
+            </li>
+            <li>Modify configuration of database as your's by file or manual config</li>
+            <li>Choose SQL content you need to analysis or format, right click call Editor popup, find SOAR and click
+                relevant menu, then show analysis result dialog or replace origin content as formatted SQL
+            </li>
+        </ol>
+        </p>
+        <p>
+            You can get more help of configuration or report issue in
+            <a href="https://github.com/helloworlde/soar-jetbrains-plugin">soar-jetbrains-plugin</a>
+        </p>
+        <br>
+        <p>
+            SOAR(SQL optimizer And Rewrite) 是一为小米数据库工具 <a href="https://github.com/XiaoMi/soar">SOAR</a> 开发的 IDE 插件，用于
+            SQL 优化改写
+        </p>
+        <h3>如何使用</h3>
+        <p>
+        <ol>
+            <li>SOAR 执行依赖于 GO 运行环境，请先确保 GO 环境安装配置正确</li>
+            <li>打开设置，找到 SOAR 的设置面板，点击 Init 按钮获取安装命令</li>
+            <li>执行弹窗内的命令，下载 SOAR 并修改执行权限</li>
+            <li>执行完命令后，将 SOAR 的路径填写在配置中，点击 Check 按钮检查是否正确配置</li>
+            <li>修改配置文件，可以选择使用文件配置或者手动配置</li>
+            <li>选择需要分析或格式化的 SQL 内容，右键选择编辑弹窗，找到 SOAR 菜单并选择需要的功能，执行完成之后会弹窗显示分析结果或用格式化后的 SQL 替换原来的内容
+            </li>
+        </ol>
+        </p>
+        <p>
+            可以在 <a href="https://github.com/helloworlde/soar-jetbrains-plugin">soar-jetbrains-plugin</a> 获取详细配置信息或反馈问题
+        </p>
+        ]]></description>
+
+    <depends>com.intellij.modules.lang</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <applicationService serviceInterface="io.github.hellowoodes.soar.config.SoarSettings"
+                            serviceImplementation="io.github.hellowoodes.soar.config.SoarSettings"/>
+        <applicationConfigurable instance="io.github.hellowoodes.soar.config.SoarConfigurable"/>
+    </extensions>
+
+    <actions>
+        <group id="cn.com.hellowoodes.SoarGroup" class="io.github.hellowoodes.soar.action.SoarActionGroup"
+               compact="true" text="SOAR" popup="true">
+            <separator/>
+            <action id="SoarSQLAnalysis" class="io.github.hellowoodes.soar.action.AnalysisAction" text="Analysis SQL"
+                    description="Analysis Selected SQL">
+                <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl H"/>
+            </action>
+            <action id="SoarSQLFormat" class="io.github.hellowoodes.soar.action.FormatAction" text="Format SQL"
+                    description="Format Selected SQL">
+                <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl J"/>
+            </action>
+
+            <add-to-group group-id="EditorPopupMenu" relative-to-action="EditorPopupMenu1" anchor="before"/>
+            <separator/>
+        </group>
+    </actions>
+</idea-plugin>

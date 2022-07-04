@@ -1,0 +1,61 @@
+buildscript {
+    repositories {
+        maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
+        mavenCentral()
+    }
+}
+plugins {
+    id "org.jetbrains.intellij" version "0.3.12"
+}
+ 
+group "io.github.helloworlde"
+version "${soarVersion}"
+
+repositories {
+    maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
+    mavenCentral()
+}
+
+
+dependencies {
+    compile("org.apache.commons:commons-lang3:3.7")
+    compile("org.apache.httpcomponents:httpclient:4.3.4")
+    compile("org.projectlombok:lombok:1.18.2")
+    compile("com.google.guava:guava:19.0")
+    compile("com.alibaba:fastjson:1.2.46")
+    compile("mysql:mysql-connector-java:5.1.47")
+}
+
+intellij {
+    version "${intellijVersion}"
+    pluginName "Soar"
+    updateSinceUntilBuild false
+    plugins = ["yaml"]
+}
+
+publishPlugin {
+    username "${intellijPublishUsername}"
+    password "${intellijPublishPassword}"
+    channels "${intellijPublishChannels}"
+}
+
+patchPluginXml {
+    sinceBuild "${intellijSinceBuild}"
+    changeNotes """
+      1.0.2
+      <ul>
+        <li>Fixed issue <a href='https://github.com/helloworlde/soar-jetbrains-plugin/issues/9'>#9</a> of no response in windows platform</li>
+        <li>Fixed issue encode of chinese in windows platform</li>
+        <li>Add usage description in plugin introduce</li>
+      </ul>
+      1.0.1
+      <ul>
+        <li>Modify IDE version limit</li>
+      </ul>
+      1.0.0
+      <ul>
+          <li>SQL analysis</li>
+          <li>SQL format</li>
+      </ul>
+      """
+}
